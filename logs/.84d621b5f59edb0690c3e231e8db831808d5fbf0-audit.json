@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/.84d621b5f59edb0690c3e231e8db831808d5fbf0-audit.json",
+    "files": [
+        {
+            "date": 1748358435554,
+            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-05-27.log",
+            "hash": "adff7250f6ad15e6a79d802ce3e390cc1ac499e77262cf33b6014832e51fd0c3"
+        },
+        {
+            "date": 1748498419956,
+            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-05-29.log",
+            "hash": "00a4f36f4af822e8497482254e51a86e47ed7f0b758f707934ab989249027708"
+        }
+    ],
+    "hashType": "sha256"
+}
