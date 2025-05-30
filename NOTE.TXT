@@ -1,0 +1,261 @@
+give prisma.schema
+
+
+# User
+ID
+firstName
+lastName
+email
+password
+
+[token]
+[userDetail]
+[userBank]
+[Note&Terms]
+[CustomColumn]
+[customer]
+[category]
+[product]
+[bill]
+
+#token
+ID
+UserID (From User Table)
+token
+expiryDate
+revoke
+
+#userDetail
+ID
+UserID (From User Table)
+CompanyName
+GstNumber
+PhoneNumber
+BusinessEmail
+BillingAddress
+shippingAddress
+PanNumber
+AlternativePhoneNumber
+website
+Signature [{img:'image url array', defult: boolean}]
+
+#userBank
+ID
+UserID (From User Table)
+BankName
+AccountNumber
+IFSCCode
+AccountType
+BranchName
+UPI
+OpeningBalance
+GpayPhonepayNumber
+note: ['string array']
+default : boolean
+
+#Note&Terms
+ID
+UserID (From User Table)
+note: {
+    invoice: ['string array'],
+    purches: ['string array'],
+    quotetion: ['string array'],
+    sale retuen/credit note: ['string array'],
+    purches return/debit note: ['string array'],
+    purchese order: ['string array'],
+    sales order: ['string array'],
+    pro forma invoice:  ['string array'],
+    delivery challan:  ['string array'],
+}
+terms:  {
+    invoice: ['string array'],
+    purches: ['string array'],
+    quotetion: ['string array'],
+    sale retuen/credit note: ['string array'],
+    purches return/debit note: ['string array'],
+    purchese order: ['string array'],
+    sales order: ['string array'],
+    pro forma invoice:  ['string array'],
+    delivery challan:  ['string array'],
+}
+whatsAppMessage: {
+    message1: {},
+    message2: {},
+    message3: {}
+}
+
+#CustomColumn
+ID
+UserID (From User Table)
+columnName
+columnType
+options : []
+isMultiSelect: boolean
+status: boolean
+
+
+#customer
+ID
+UserID (From User Table)
+customerType: enum ('customer', 'vender')
+Name
+PhoneNumber
+email
+billingAddress
+shippingAddress
+companyDetails: {
+    GstNumber,
+    ConpanyName
+}
+customerPrefrence: {
+    discount (in persontage),
+    creditLimit,
+    TDS: boolen,
+    TCS: boolen
+}
+otherDetails: {
+    OpeningBalance: {
+        debit: boolen,
+        credit: boolen,
+        amount,
+    },
+    panNumber,
+    CCemail,
+    note: []
+    tags: []
+    CustomColumnID (from CustomColumn)
+}
+
+[CustomColumn]
+
+
+#category
+ID
+UserID (From User Table)
+name
+discription
+
+#product
+ID
+UserID (From User Table)
+type: enum('product', 'service')
+name
+sellingPrice: {
+    price,
+    tax: boolen
+}
+purchesPrice: {
+    price,
+    tax: boolen
+}
+taxRate: (perontage)
+HSNcode: (if type is product)
+SACcode: (if type is service)
+unit: from unit table
+category : (from category table)
+discription
+barcode
+productImage: []
+onlinestore: boolen
+notForSale: boolen
+
+
+#bill
+ID
+UserID (From User Table)
+type: enum('invoice', 'quatation')
+invoiceNumber
+invoiceDate
+dueDate
+invoide: boolen
+billofsupply: boolen
+discountOn: enum ('unit price', 'price with tax', 'net amount', 'total amount')
+customer: (customerid from customer table)
+product: [
+    {
+        productID: (from product tavle),
+        unit price,
+        price with tax,
+        discount: {
+            persontage: boolen,
+            ruppes: boolen,
+            value,
+            type: enum('unit price', 'price with tax', 'net amount', 'total amount')
+        },
+        quantities,
+        discription
+    }
+]
+dispatchAddress
+shippingAddress
+signature : img url
+refrence
+note
+term 
+discount: {
+    persontage: boolen,
+    ruppes: boolen,
+    value
+}
+charges: {
+    shipping: {
+        persontage: boolen,
+        ruppes: boolen,
+        value,
+        type: enum('with tax', 'without tax' )
+    },
+    packaging: {
+        persontage: boolen,
+        ruppes: boolen,
+        value,
+        type: enum('with tax', 'without tax' )
+    },
+    otherCharges: {
+        persontage: boolen,
+        ruppes: boolen,
+        value,
+        type: enum('with tax', 'without tax' )
+    }
+}
+attechment: {
+    file: [],
+    type: enum('pdf', 'image', 'other')
+}
+TDS: {
+    persontage: boolen,
+    ruppes: boolen,
+    value
+}
+TCS: {
+    persontage: boolen,
+    ruppes: boolen,
+    value
+}
+RCM: {
+    persontage: boolen,
+    ruppes: boolen,
+    value
+}
+billStatus: enum('draft', 'sent', 'paid', 'partial paid', 'overdue', 'cancelled')
+billTotal: {
+    tax: {
+        totalCGST,
+        totalSGST,
+        totalIGST,
+        totalCESS
+    },
+    totalAmount,
+    totalDiscount,
+    totalCharges,
+    totalTDS,
+    totalTCS,
+    totalRCM,
+    netAmount
+}
+
+
+
+
+#unit (blobal table)
+id
+unit
