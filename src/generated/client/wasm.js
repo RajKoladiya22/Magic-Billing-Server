@@ -125,7 +125,7 @@ exports.Prisma.UserScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   email: 'email',
-  passwordHash: 'passwordHash',
+  password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -133,10 +133,172 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.TokenScalarFieldEnum = {
   id: 'id',
   token: 'token',
-  userId: 'userId',
+  expiryDate: 'expiryDate',
+  revoked: 'revoked',
   createdAt: 'createdAt',
-  expiresAt: 'expiresAt',
-  revoked: 'revoked'
+  userId: 'userId'
+};
+
+exports.Prisma.UserDetailScalarFieldEnum = {
+  id: 'id',
+  companyName: 'companyName',
+  gstNumber: 'gstNumber',
+  panNumber: 'panNumber',
+  businessEmail: 'businessEmail',
+  phoneNumber: 'phoneNumber',
+  alternativePhoneNumber: 'alternativePhoneNumber',
+  website: 'website',
+  billingAddress: 'billingAddress',
+  shippingAddress: 'shippingAddress',
+  signatureImages: 'signatureImages',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.UserBankScalarFieldEnum = {
+  id: 'id',
+  bankName: 'bankName',
+  accountNumber: 'accountNumber',
+  ifscCode: 'ifscCode',
+  branch: 'branch',
+  accountType: 'accountType',
+  openingBalance: 'openingBalance',
+  upiId: 'upiId',
+  notes: 'notes',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.NoteAndTermsScalarFieldEnum = {
+  id: 'id',
+  note: 'note',
+  terms: 'terms',
+  whatsAppMessage: 'whatsAppMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.CustomColumnScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label',
+  dataType: 'dataType',
+  isMultiSelect: 'isMultiSelect',
+  options: 'options',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  billingAddress: 'billingAddress',
+  shippingAddress: 'shippingAddress',
+  companyDetails: 'companyDetails',
+  preferences: 'preferences',
+  details: 'details',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  customColumnId: 'customColumnId'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  hsnCode: 'hsnCode',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  name: 'name',
+  sellingPrice: 'sellingPrice',
+  purchasePrice: 'purchasePrice',
+  taxRate: 'taxRate',
+  hsnCode: 'hsnCode',
+  sacCode: 'sacCode',
+  barcode: 'barcode',
+  isActive: 'isActive',
+  isTaxable: 'isTaxable',
+  onlinestore: 'onlinestore',
+  notForSale: 'notForSale',
+  default: 'default',
+  images: 'images',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  categoryId: 'categoryId',
+  unitId: 'unitId'
+};
+
+exports.Prisma.UnitScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  abbreviation: 'abbreviation',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  documentNumber: 'documentNumber',
+  documentDate: 'documentDate',
+  dueDate: 'dueDate',
+  invoice: 'invoice',
+  billOfSupply: 'billOfSupply',
+  discountOn: 'discountOn',
+  dispatchAddress: 'dispatchAddress',
+  shippingAddress: 'shippingAddress',
+  signature: 'signature',
+  reference: 'reference',
+  note: 'note',
+  term: 'term',
+  discount: 'discount',
+  charges: 'charges',
+  attachments: 'attachments',
+  TDS: 'TDS',
+  TCS: 'TCS',
+  RCM: 'RCM',
+  billStatus: 'billStatus',
+  billSummary: 'billSummary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  customerId: 'customerId'
+};
+
+exports.Prisma.BillItemScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  discount: 'discount',
+  discountType: 'discountType',
+  cgstAmount: 'cgstAmount',
+  sgstAmount: 'sgstAmount',
+  igstAmount: 'igstAmount',
+  itemPrice: 'itemPrice',
+  itemPriceWithTax: 'itemPriceWithTax',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  billId: 'billId',
+  productId: 'productId'
 };
 
 exports.Prisma.SortOrder = {
@@ -144,15 +306,86 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.ColumnType = exports.$Enums.ColumnType = {
+  TEXT: 'TEXT',
+  NUMBER: 'NUMBER',
+  DATE: 'DATE',
+  SELECT: 'SELECT'
+};
+
+exports.CustomerType = exports.$Enums.CustomerType = {
+  CUSTOMER: 'CUSTOMER',
+  VENDOR: 'VENDOR'
+};
+
+exports.ProductType = exports.$Enums.ProductType = {
+  PRODUCT: 'PRODUCT',
+  SERVICE: 'SERVICE'
+};
+
+exports.BillType = exports.$Enums.BillType = {
+  INVOICE: 'INVOICE',
+  QUOTATION: 'QUOTATION',
+  SALES_ORDER: 'SALES_ORDER',
+  DEBIT_NOTE: 'DEBIT_NOTE',
+  CREDIT_NOTE: 'CREDIT_NOTE'
+};
+
+exports.DiscountOnType = exports.$Enums.DiscountOnType = {
+  UNIT_PRICE: 'UNIT_PRICE',
+  PRICE_WITH_TAX: 'PRICE_WITH_TAX',
+  PRICE_WITHOUT_TAX: 'PRICE_WITHOUT_TAX',
+  TOTAL_AMOUNT: 'TOTAL_AMOUNT',
+  NET_AMOUNT: 'NET_AMOUNT'
+};
+
+exports.BillStatusType = exports.$Enums.BillStatusType = {
+  DRAFT: 'DRAFT',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED'
+};
+
+exports.DiscountType = exports.$Enums.DiscountType = {
+  FLAT: 'FLAT',
+  PERCENTAGE: 'PERCENTAGE'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Token: 'Token'
+  Token: 'Token',
+  UserDetail: 'UserDetail',
+  UserBank: 'UserBank',
+  NoteAndTerms: 'NoteAndTerms',
+  CustomColumn: 'CustomColumn',
+  Customer: 'Customer',
+  Category: 'Category',
+  Product: 'Product',
+  Unit: 'Unit',
+  Bill: 'Bill',
+  BillItem: 'BillItem'
 };
 
 /**

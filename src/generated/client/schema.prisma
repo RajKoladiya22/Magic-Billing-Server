@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://neondb_owner:npg_bAnukrY6TU9H@ep-hidden-frost-a1r2gk9n-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+  // url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -9,25 +10,286 @@ generator client {
   binaryTargets = ["native", "windows"]
 }
 
-model User {
-  id           String   @id @default(uuid())
-  firstName    String   @map("first_name")
-  lastName     String   @map("last_name")
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  tokens       Token[] // relation to Token model
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+/// Enumerations for fixed value sets
+enum BillType {
+  INVOICE
+  QUOTATION
+  SALES_ORDER
+  DEBIT_NOTE
+  CREDIT_NOTE
 }
 
-model Token {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  revoked   Boolean  @default(false)
+enum BillStatusType {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
 
-  @@index([token])
+enum DiscountType {
+  FLAT
+  PERCENTAGE
+}
+
+enum DiscountOnType {
+  UNIT_PRICE // Discount applied per unit price
+  PRICE_WITH_TAX // Discount applied on price including tax
+  PRICE_WITHOUT_TAX // Discount applied on price excluding tax
+  TOTAL_AMOUNT // Discount applied on total amount
+  NET_AMOUNT // Discount applied on net amount after other adjustments
+}
+
+enum CustomerType {
+  CUSTOMER
+  VENDOR
+}
+
+enum ProductType {
+  PRODUCT
+  SERVICE
+}
+
+enum ColumnType {
+  TEXT
+  NUMBER
+  DATE
+  SELECT
+}
+
+/// Main User (tenant) model
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Tenant-scoped relations
+  tokens        Token[]
+  detail        UserDetail?
+  banks         UserBank[]
+  noteAndTerms  NoteAndTerms?
+  customColumns CustomColumn[]
+  customers     Customer[]
+  categories    Category[]
+  products      Product[]
+  bills         Bill[]
+}
+
+/// Authentication tokens (e.g. refresh or API tokens)
+model Token {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token      String
+  expiryDate DateTime
+  revoked    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @db.Uuid // one token per user for simplicity
+}
+
+/// Extended company/profile information for a User (1:1)
+model UserDetail {
+  id                     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyName            String? // Registered company name
+  gstNumber              String? // GSTIN
+  panNumber              String? // PAN
+  businessEmail          String? // Official business email
+  phoneNumber            String?
+  alternativePhoneNumber String?
+  website                String?
+  billingAddress         Json? // Freeform JSON for address
+  shippingAddress        Json?
+  signatureImages        Json? // Array of images with default flag
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  userId                 String   @unique @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Banking details per user (1:m)
+model UserBank {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bankName       String
+  accountNumber  String
+  ifscCode       String?
+  branch         String?
+  accountType    String? // e.g. Savings, Current
+  openingBalance Float?
+  upiId          String?
+  notes          String[] @default([]) // Array of remarks
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+}
+
+/// Default notes and terms (JSON) for documents per user (1:1)
+model NoteAndTerms {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  note            Json? // Nested JSON for various document notes
+  terms           Json? // Nested JSON for various document terms
+  whatsAppMessage Json? // Optional WhatsApp templates
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @db.Uuid
+}
+
+/// Custom metadata columns defined by the user
+model CustomColumn {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String // Internal column key
+  label         String // Display label
+  dataType      ColumnType
+  isMultiSelect Boolean    @default(false)
+  options       String[]   @default([]) // List of select options
+  status        Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String     @db.Uuid
+  customers Customer[] // Customers referencing this column
+}
+
+/// Customers/Vendors belonging to a user
+model Customer {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type            CustomerType
+  name            String
+  email           String?
+  phone           String?
+  billingAddress  Json? // JSON address object
+  shippingAddress Json?
+  companyDetails  Json? // JSON for GST and company name
+  preferences     Json? // JSON for discount, credit limit, TDS, TCS
+  details         Json? // Additional nested details (e.g. opening balance)
+  tags            String[]     @default([])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?       @db.Uuid
+  customColumn   CustomColumn? @relation(fields: [customColumnId], references: [id], onDelete: SetNull)
+  customColumnId String?       @db.Uuid
+  bills          Bill[]
+}
+
+/// Product categories for classification
+model Category {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  hsnCode     String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String    @db.Uuid
+  products Product[]
+}
+
+/// Products with GST rates, pricing, and images
+model Product {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type          ProductType
+  name          String
+  sellingPrice  Json? // Price at which sold
+  purchasePrice Json? // Cost price
+  taxRate       Float? // Percentage rate
+  hsnCode       String? // Required if type=PRODUCT
+  sacCode       String? // Required if type=SERVICE
+  barcode       String?
+  isActive      Boolean     @default(true)
+  isTaxable     Boolean     @default(true)
+  onlinestore   Boolean     @default(true)
+  notForSale    Boolean     @default(false)
+  default       Boolean     @default(false)
+  images        String[]    @default([])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String     @db.Uuid
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  categoryId String?    @db.Uuid
+  unit       Unit?      @relation(fields: [unitId], references: [id])
+  unitId     String?    @db.Uuid
+  items      BillItem[]
+}
+
+/// Units of measure (globally shared)
+model Unit {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  abbreviation String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  products Product[]
+}
+
+/// Billing/invoicing documents
+model Bill {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type            BillType
+  documentNumber  String // Unique invoice/quotation number
+  documentDate    DateTime // Date of issue
+  dueDate         DateTime? // Payment due date
+  invoice         Boolean        @default(false)
+  billOfSupply    Boolean        @default(false)
+  discountOn      DiscountOnType
+  dispatchAddress Json? // JSON address
+  shippingAddress Json?
+  signature       String? // Base64 signature
+  reference       String?
+  note            String?
+  term            String?
+  discount        Json? // Nested JSON for discount details
+  charges         Json? // Nested JSON for charges breakdown
+  attachments     String[]       @default([]) // Files (pdf/image/other)
+  TDS             Float?         @default(0)
+  TCS             Float?         @default(0)
+  RCM             Float          @default(0)
+  billStatus      BillStatusType
+  billSummary     Json? // JSON for totals and tax summary
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String     @db.Uuid
+  customer   Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId String?    @db.Uuid
+  items      BillItem[]
+}
+
+/// Line items within a bill/document
+model BillItem {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  description      String // Item description
+  quantity         Float
+  unitPrice        Float
+  discount         Float        @default(0) // Discount amount
+  discountType     DiscountType @default(FLAT)
+  cgstAmount       Float        @default(0)
+  sgstAmount       Float        @default(0)
+  igstAmount       Float        @default(0)
+  itemPrice        Float // Total after discount and taxes
+  itemPriceWithTax Float // Total after discount and taxes
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  bill      Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId    String   @db.Uuid
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?  @db.Uuid
 }
