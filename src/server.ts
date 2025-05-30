@@ -4,18 +4,18 @@ import { validatedEnv } from "./config/validate-env";
 import app from "./app";
 import { shutdownDb } from "./config/database.config";
 import { logger } from "./core/help/logs/logger";
-// import { sendSuccessResponse } from "./core/utils/httpResponse";
+import { sendSuccessResponse } from "./core/utils/httpResponse";
 
 envConfiguration();
 const env = validatedEnv;
 
 // console.log(env);
 
-// app.use("/", (req, res) => {
-//   sendSuccessResponse(res, 200, "Base route is working", {
-//     timestamp: new Date(),
-//   });
-// });
+app.use("/", (req, res) => {
+  sendSuccessResponse(res, 200, "Base route is working", {
+    timestamp: new Date(),
+  });
+});
 
 const server = app.listen(env.PORT, () => {
   logger.info(
