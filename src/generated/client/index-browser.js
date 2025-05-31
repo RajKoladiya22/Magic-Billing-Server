@@ -127,7 +127,10 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  role: 'role',
+  isActive: 'isActive',
+  isVerified: 'isVerified'
 };
 
 exports.Prisma.TokenScalarFieldEnum = {
@@ -137,6 +140,16 @@ exports.Prisma.TokenScalarFieldEnum = {
   revoked: 'revoked',
   createdAt: 'createdAt',
   userId: 'userId'
+};
+
+exports.Prisma.OTPScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  code: 'code',
+  expiresAt: 'expiresAt',
+  used: 'used',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.UserDetailScalarFieldEnum = {
@@ -326,6 +339,10 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.RoleType = exports.$Enums.RoleType = {
+  USER: 'USER'
+};
+
 exports.ColumnType = exports.$Enums.ColumnType = {
   TEXT: 'TEXT',
   NUMBER: 'NUMBER',
@@ -376,6 +393,7 @@ exports.DiscountType = exports.$Enums.DiscountType = {
 exports.Prisma.ModelName = {
   User: 'User',
   Token: 'Token',
+  OTP: 'OTP',
   UserDetail: 'UserDetail',
   UserBank: 'UserBank',
   NoteAndTerms: 'NoteAndTerms',

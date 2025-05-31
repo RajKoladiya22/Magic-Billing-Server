@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
+import routes from "./routes/index";
 // import path from "path";
 // import fs from "fs";
 
@@ -11,17 +12,14 @@ const corsOptions = {
   credentials: true, // <— allow cookies
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
+app.use(cookieParser());
 
 
-app.use(cookieParser(/* optional secret for signed cookies */));
-app.use("/api/v1", (req, res, next) => {
-    res.status(200).json({ message: "API is working!" });
-    next();
-});       
+app.use("/api/v1", routes);
 
 export default app;

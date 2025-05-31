@@ -6,6 +6,7 @@ import { shutdownDb } from "./config/database.config";
 import { logger } from "./core/help/logs/logger";
 import { sendSuccessResponse } from "./core/utils/httpResponse";
 
+
 envConfiguration();
 const env = validatedEnv;
 
@@ -16,7 +17,7 @@ app.use("/", (req, res) => {
     timestamp: new Date(),
   });
 });
-
+import './core/jobs'
 const server = app.listen(env.PORT, () => {
   logger.info(
     `🚀 Server listening on http://localhost:${env.PORT} - [${env.NODE_ENV}]`

@@ -1,4 +1,4 @@
-// core/utils/responseHandler.ts
+// core/utils/httpResponse.ts
 import { Response } from "express";
 
 // Success Response

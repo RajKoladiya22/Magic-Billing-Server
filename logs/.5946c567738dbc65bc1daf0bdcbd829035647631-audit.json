@@ -9,6 +9,11 @@
             "date": 1748587688764,
             "name": "D:\\Magic Billing\\logs\\application-2025-05-30.log",
             "hash": "11b8f48b7dbe1a4f7a2eb664ad08777438ed857cc499343f168ab0bf9160cb2d"
+        },
+        {
+            "date": 1748679251515,
+            "name": "D:\\Magic Billing\\logs\\application-2025-05-31.log",
+            "hash": "3faf1e4d5ff5c90467415f6f72ce0b00d5524dc4ed4203fb31ce044929778190"
         }
     ],
     "hashType": "sha256"

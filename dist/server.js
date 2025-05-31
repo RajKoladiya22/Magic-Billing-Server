@@ -16,6 +16,7 @@ app_1.default.use("/", (req, res) => {
         timestamp: new Date(),
     });
 });
+require("./core/jobs");
 const server = app_1.default.listen(env.PORT, () => {
     logger_1.logger.info(`🚀 Server listening on http://localhost:${env.PORT} - [${env.NODE_ENV}]`);
 });

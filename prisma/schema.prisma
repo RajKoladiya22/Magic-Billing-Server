@@ -58,6 +58,10 @@ enum ColumnType {
   SELECT
 }
 
+enum RoleType {
+  USER
+}
+
 /// Main User (tenant) model
 model User {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -67,7 +71,10 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  role      RoleType @default(USER) // Default role, can be ADMIN, USER, etc.
+  isActive  Boolean  @default(true) // Soft delete flag
+  isVerified Boolean  @default(false) // Email verification status
+  
   // Tenant-scoped relations
   tokens        Token[]
   detail        UserDetail?
@@ -90,6 +97,19 @@ model Token {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @db.Uuid // one token per user for simplicity
+}
+
+model OTP {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email]) // to efficiently query by email
+  @@index([email, code]) // to efficiently verify code
 }
 
 /// Extended company/profile information for a User (1:1)
@@ -223,8 +243,8 @@ model Product {
   category   Category?  @relation(fields: [categoryId], references: [id])
   categoryId String?    @db.Uuid
   unit       Unit?      @relation(fields: [unitId], references: [id])
-  unitId     String?  @db.Uuid
-  items      BillItem[] 
+  unitId     String?    @db.Uuid
+  items      BillItem[]
 }
 
 /// Units of measure (globally shared)
