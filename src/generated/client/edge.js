@@ -388,7 +388,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\Magic Billing\\src\\generated\\client",
+      "value": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/src/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -397,7 +397,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       },
       {
@@ -406,7 +406,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\Magic Billing\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

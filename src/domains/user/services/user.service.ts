@@ -19,6 +19,7 @@ const OTP_COOLDOWN_SECONDS = 45;
 
 // ────── EMAIL TRANSPORTER ──────────────────────────────────────────────────────
 // Assumes these env vars exist: MAIL_HOST, MAIL_USER, MAIL_PASS
+
 const transporter = nodemailer.createTransport({
   // host: process.env.MAIL_HOST,
   // port: 587,
@@ -37,6 +38,7 @@ const transporter = nodemailer.createTransport({
 /**
  * Generate a random 6‐digit numeric OTP code.
  */
+
 const generateSixDigitCode = (): string => {
   return Math.floor(100_000 + Math.random() * 900_000).toString();
 };
@@ -46,6 +48,7 @@ const generateSixDigitCode = (): string => {
  *   - Enforces a 45‐second cooldown per email (via the most recent OTP record).
  *   - Stores OTP in the OTP table (expires in 10 min, single‐use).
  */
+
 export const sendOtp = async (email: string): Promise<void> => {
   // 1. Check for cooldown: find the latest unused OTP for this email
   const recent = await prisma.oTP.findFirst({
@@ -97,6 +100,7 @@ export const sendOtp = async (email: string): Promise<void> => {
  *   - not expired,
  *   - then mark it used.
  */
+
 export const verifyOtp = async (email: string, code: string): Promise<void> => {
   // 1. Find a matching OTP that is not already used
   const otpRecord = await prisma.oTP.findFirst({
