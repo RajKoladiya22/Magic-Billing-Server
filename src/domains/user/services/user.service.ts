@@ -178,6 +178,18 @@ export const signinUser = async (input: SigninInput): Promise<User> => {
   // 1. Find user by email
   const user = await prisma.user.findUnique({
     where: { email },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      password: true,
+      createdAt: true,
+      updatedAt: true,
+      role: true,       // Default role, can be ADMIN, USER, etc.
+      isActive: true,   // Soft delete flag
+      isVerified: true, // Email verification status
+    },
   });
   if (!user) {
     throw new Error("Invalid email or password.");

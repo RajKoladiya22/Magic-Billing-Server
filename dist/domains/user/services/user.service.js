@@ -113,6 +113,18 @@ const signinUser = async (input) => {
     const { email, password } = input;
     const user = await user_model_1.prisma.user.findUnique({
         where: { email },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            password: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            isActive: true,
+            isVerified: true,
+        },
     });
     if (!user) {
         throw new Error("Invalid email or password.");
