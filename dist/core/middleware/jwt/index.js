@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyRefreshToken = exports.verifyAccessToken = exports.generateRefreshToken = exports.generateAccessToken = void 0;
+exports.authorizeRoles = exports.authenticateUser = exports.verifyRefreshToken = exports.verifyAccessToken = exports.generateRefreshToken = exports.generateAccessToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const httpResponse_1 = require("../../utils/httpResponse");
 dotenv_1.default.config();
 const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
@@ -45,4 +46,62 @@ const verifyRefreshToken = (token) => {
     }
 };
 exports.verifyRefreshToken = verifyRefreshToken;
+const authenticateUser = (req, res, next) => {
+    var _a;
+    try {
+        let token;
+        token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.rJmkAxzNakU;
+        if (!token) {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith("Bearer ")) {
+                token = authHeader.split(" ")[1];
+            }
+        }
+        if (!token) {
+            (0, httpResponse_1.sendErrorResponse)(res, 401, "Authentication token missing");
+            return;
+        }
+        const decoded = jsonwebtoken_1.default.verify(token, ACCESS_SECRET, {
+            algorithms: ["HS256"],
+        });
+        if (!decoded ||
+            typeof decoded !== "object" ||
+            !decoded.id ||
+            !decoded.role) {
+            (0, httpResponse_1.sendErrorResponse)(res, 401, "Invalid token payload");
+            return;
+        }
+        req.user = {
+            id: decoded.id,
+            role: decoded.role,
+        };
+        next();
+    }
+    catch (err) {
+        console.log("err.name---->", err.name);
+        console.log("\n\nerr---->", err);
+        if (err.name === "TokenExpiredError") {
+            res.clearCookie("rJmkAxzNakU", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+            });
+            (0, httpResponse_1.sendErrorResponse)(res, 401, "Token expired");
+            return;
+        }
+        (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized access");
+        return;
+    }
+};
+exports.authenticateUser = authenticateUser;
+const authorizeRoles = (...allowedRoles) => (req, res, next) => {
+    var _a;
+    const role = (_a = req.user) === null || _a === void 0 ? void 0 : _a.role;
+    if (!role || !allowedRoles.includes(role)) {
+        (0, httpResponse_1.sendErrorResponse)(res, 403, "Forbidden:You Don't have Permission");
+        return;
+    }
+    next();
+};
+exports.authorizeRoles = authorizeRoles;
 //# sourceMappingURL=index.js.map

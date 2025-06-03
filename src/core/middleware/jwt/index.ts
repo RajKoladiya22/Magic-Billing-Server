@@ -1,6 +1,9 @@
+import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import dotenv from "dotenv";
-import ms from "ms"; 
+import ms from "ms";
+import { sendErrorResponse } from "../../utils/httpResponse";
+import { AuthenticatedRequest } from "../../../interfaces/auth.interfaces";
 
 dotenv.config();
 
@@ -54,3 +57,81 @@ export const verifyRefreshToken = (token: string): JwtPayload | null => {
     return null;
   }
 };
+
+export const authenticateUser = (
+  req: Request & AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    let token: string | undefined;
+    token = req.cookies?.rJmkAxzNakU;
+
+    // 2. Fallback to cookie
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.split(" ")[1];
+      }
+    }
+
+    if (!token) {
+      sendErrorResponse(res, 401, "Authentication token missing");
+      return;
+    }
+
+    const decoded = jwt.verify(token, ACCESS_SECRET, {
+      algorithms: ["HS256"],
+    }) as JwtPayload;
+
+    // console.log("decoded--->", decoded);
+
+    if (
+      !decoded ||
+      typeof decoded !== "object" ||
+      !decoded.id ||
+      !decoded.role
+    ) {
+      sendErrorResponse(res, 401, "Invalid token payload");
+      return;
+    }
+
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+    };
+
+    next();
+  } catch (err: any) {
+    console.log("err.name---->", err.name);
+    console.log("\n\nerr---->", err);
+
+    if (err.name === "TokenExpiredError") {
+      res.clearCookie("rJmkAxzNakU", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+      sendErrorResponse(res, 401, "Token expired");
+      return;
+    }
+    // console.error("JWT verification error:", err);
+    sendErrorResponse(res, 401, "Unauthorized access");
+    return;
+  }
+};
+
+
+export const  authorizeRoles =
+  (...allowedRoles: string[]) =>
+  (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    const role = req.user?.role;
+    // console.log("role-->", role);
+
+    if (!role || !allowedRoles.includes(role)) {
+      sendErrorResponse(res, 403, "Forbidden:You Don't have Permission");
+      return;
+    }
+
+    next();
+  };

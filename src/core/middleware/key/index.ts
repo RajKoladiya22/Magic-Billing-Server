@@ -1,7 +1,7 @@
 // src/core/middleware/checkStaticToken.ts
 import { Request, Response, NextFunction } from "express";
 import { validatedEnv } from "../../../config/validate-env";
-import { sendErrorResponse } from "@core/utils/httpResponse";
+import { sendErrorResponse } from "../../utils/httpResponse";
 
 export const checkStaticToken = (
   req: Request,

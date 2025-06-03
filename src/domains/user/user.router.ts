@@ -8,6 +8,8 @@ import {
   signinHandler,
   refreshAccessTokenHandler,
 } from "./user.controller";
+import { authenticateUser } from "../../core/middleware/jwt";
+import { RequestHandler } from "express";
 
 const router = express.Router();
 
@@ -17,11 +19,16 @@ router.get("/check", (req, res, next) => {
 
 // 1. Send OTP to user’s email
 //    POST /auth/send-otp
-router.post("/send-otp", sendOtpHandler);
+
+router.post("/send-otp", authenticateUser as RequestHandler, sendOtpHandler);
 
 // 2. Verify OTP
 //    POST /auth/verify-otp
-router.post("/verify-otp", verifyOtpHandler);
+router.post(
+  "/verify-otp",
+  authenticateUser as RequestHandler,
+  verifyOtpHandler
+);
 
 // 3. Signup (after successful OTP verification)
 //    POST /auth/signup
@@ -32,6 +39,10 @@ router.post("/signup", signupHandler);
 router.post("/signin", signinHandler);
 
 // Refresh Access Token
-router.post("/refresh-token", refreshAccessTokenHandler);
+router.post(
+  "/refresh-token",
+  authenticateUser as RequestHandler,
+  refreshAccessTokenHandler
+);
 
 export default router;

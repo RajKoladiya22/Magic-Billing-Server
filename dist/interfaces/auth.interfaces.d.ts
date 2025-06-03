@@ -34,3 +34,9 @@ export interface SigninInput {
     email: string;
     password: string;
 }
+export interface AuthenticatedRequest extends Request {
+    user?: {
+        id: string;
+        role: string;
+    };
+}

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkStaticToken = void 0;
 const validate_env_1 = require("../../../config/validate-env");
-const httpResponse_1 = require("@core/utils/httpResponse");
+const httpResponse_1 = require("../../utils/httpResponse");
 const checkStaticToken = (req, res, next) => {
     try {
         const incoming = req.header("x-api-key") || req.header("authorization");

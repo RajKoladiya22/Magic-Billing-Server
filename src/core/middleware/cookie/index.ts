@@ -1,7 +1,7 @@
 import { Response } from "express";
 
 export function setRefreshTokenCookie(res: Response, token: string) {
-  res.cookie("rJmkUxzNakU", token, {
+  res.cookie("rJmkAxzNakU", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",

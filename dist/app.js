@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const key_1 = require("./core/middleware/key");
 const index_1 = __importDefault(require("./routes/index"));
 const app = (0, express_1.default)();
 const corsOptions = {
@@ -12,6 +13,7 @@ const corsOptions = {
     credentials: true,
 };
 app.use(express_1.default.json());
+app.use(key_1.checkStaticToken);
 app.use((0, cookie_parser_1.default)());
 app.use("/api/v1", index_1.default);
 exports.default = app;
