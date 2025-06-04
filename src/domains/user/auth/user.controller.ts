@@ -10,29 +10,35 @@ import {
 import {
   sendSuccessResponse,
   sendErrorResponse,
-} from "../../core/utils/httpResponse";
+} from "../../../core/utils/httpResponse";
 import dotenv from "dotenv";
 
 // Import new JWT utilities:
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyAccessToken,
   verifyRefreshToken,
-} from "../../core/middleware/jwt";
+} from "../../../core/middleware/jwt";
 
 // Import the Token service to persist / validate refresh‐tokens:
 import {
   storeRefreshToken,
-  findValidRefreshToken,
+  // findValidRefreshToken,
 } from "./services/token.service";
-import { setRefreshTokenCookie } from "../../core/middleware/cookie";
-import { SendOtpRequestBody, SigninRequestBody, SignupRequestBody, VerifyOtpRequestBody } from "../../interfaces/auth.interfaces";
+import { setRefreshTokenCookie } from "../../../core/middleware/cookie";
+import {
+  SendOtpRequestBody,
+  SigninRequestBody,
+  SignupRequestBody,
+  VerifyOtpRequestBody,
+} from "../../../interfaces/auth.interfaces";
+import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 
 dotenv.config();
 
 const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN!; // e.g. "7d"
-
-
+const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET!;
 
 /**
  * POST /auth/send-otp
@@ -62,7 +68,7 @@ export const sendOtpHandler = async (
  * Body: { email, code }
  */
 export const verifyOtpHandler = async (
-  req:  Request<{}, {}, VerifyOtpRequestBody>,
+  req: Request<{}, {}, VerifyOtpRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
@@ -101,8 +107,8 @@ export const signupHandler = async (
     const user = await signupUser({ firstName, lastName, email, password });
 
     // Generate tokens
-    const accessToken = generateAccessToken(user.id, "user");
-    const refreshToken = generateRefreshToken(user.id, "user");
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
     // Persist the refresh‐token in DB (Token table)
     await storeRefreshToken(user.id, refreshToken, REFRESH_EXPIRES_IN);
@@ -117,6 +123,9 @@ export const signupHandler = async (
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        isVerified: user.isVerified,
       },
       tokens: {
         accessToken,
@@ -138,8 +147,12 @@ export const signinHandler = async (
 ) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      sendErrorResponse(res, 400, "Email and password are required.");
+    if (!email) {
+      sendErrorResponse(res, 400, "Email is required.");
+      return;
+    }
+    if (!password) {
+      sendErrorResponse(res, 400, "Password is required.");
       return;
     }
 
@@ -157,7 +170,6 @@ export const signinHandler = async (
 
     // console.log("Generated tokens:", refreshToken);
     // console.log("REFRESH_EXPIRES_IN:", REFRESH_EXPIRES_IN);
-    
 
     // Persist the refresh‐token in DB
     await storeRefreshToken(user.id, refreshToken, REFRESH_EXPIRES_IN);
@@ -171,6 +183,11 @@ export const signinHandler = async (
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        role: user.role,
+        isActive: user.isActive,
+        isVerified: user.isVerified,
       },
       tokens: {
         accessToken,
@@ -194,28 +211,43 @@ export const refreshAccessTokenHandler = async (
 ) => {
   try {
     // 1. Extract refresh‐token from cookie or header
-    let refreshToken = req.cookies?.rJmkUxzNakU;
-    if (!refreshToken) {
+    let accessToken = req.cookies?.rJmkAxzNakU;
+    // console.log("\n\n\ accessToken --->", accessToken );
+    if (!accessToken) {
       const authHeader = req.headers.authorization;
       if (authHeader?.startsWith("Bearer ")) {
-        refreshToken = authHeader.split(" ")[1];
+        accessToken = authHeader.split(" ")[1];
       }
     }
 
-    if (!refreshToken) {
+    if (!accessToken) {
       sendErrorResponse(res, 401, "Refresh token missing.");
       return;
     }
 
-    // 2. Verify JWT signature & decode payload
-    const payload = verifyRefreshToken(refreshToken);
+    let payload: JwtPayload | null = null;
+    try {
+      payload = jwt.verify(accessToken, ACCESS_SECRET, {
+        algorithms: ["HS256"],
+      }) as JwtPayload;
+      console.log("\n\n\n\n payload--->", payload);
+    } catch (err: any) {
+      if (err instanceof TokenExpiredError) {
+        payload = jwt.decode(accessToken) as JwtPayload;
+      } else {
+        sendErrorResponse(res, 401, "Invalid access token.");
+        return;
+      }
+    }
+
     if (!payload?.id || !payload.role) {
       sendErrorResponse(res, 401, "Invalid or malformed refresh token.");
       return;
     }
 
     // 3. Check DB that the token exists, is not revoked, and not expired
-    const stored = await findValidRefreshToken(refreshToken);
+    const stored = await findValidRefreshToken(payload?.id);
+    // console.log("\n\n\n\n stored--->", stored);
     if (!stored) {
       sendErrorResponse(res, 401, "Refresh token invalid or expired.");
       return;
@@ -224,10 +256,19 @@ export const refreshAccessTokenHandler = async (
     // 4. Issue a brand‐new access‐token (we do NOT rotate the refresh token)
     const newAccessToken = generateAccessToken(payload.id, payload.role);
 
+    // Set cookie
+    setRefreshTokenCookie(res, newAccessToken);
+
     sendSuccessResponse(res, 200, "Access token refreshed.", {
-      accessToken: newAccessToken,
+      tokens: {
+        accessToken: newAccessToken,
+      },
     });
   } catch (err: any) {
-    sendErrorResponse(res, 401, err.message || "Failed to refresh access token.");
+    sendErrorResponse(
+      res,
+      401,
+      err.message || "Failed to refresh access token."
+    );
   }
 };

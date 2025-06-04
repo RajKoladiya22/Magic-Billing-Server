@@ -1,6 +1,6 @@
 // src/domains/user/service/user.service.ts
 
-import { prisma, OTP, User } from "../user.model";
+import { prisma, OTP, User } from "./user.model";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -9,7 +9,7 @@ import {
   IUser,
   SignupInput,
   SigninInput,
-} from "../../../interfaces/auth.interfaces";
+} from "../../../../interfaces/auth.interfaces";
 
 dotenv.config();
 
@@ -206,7 +206,7 @@ export const signinUser = async (input: SigninInput): Promise<User> => {
   // 3. Compare password
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new Error("Invalid email or password.");
+    throw new Error("Invalid Password.");
   }
 
   return user;

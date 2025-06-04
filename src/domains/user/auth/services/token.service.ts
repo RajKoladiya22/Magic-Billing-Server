@@ -1,6 +1,6 @@
 // src/domains/user/service/token.service.ts
 
-import { prisma } from "../user.model";
+import { prisma } from "./user.model";
 import { Token as PrismaToken } from "@prisma/client";
 import dayjs from "dayjs";
 
@@ -8,7 +8,9 @@ import dayjs from "dayjs";
  * Parses a string like "7d", "15m", "1h" into a dayjs manipulation object.
  * Supports: "s" → seconds, "m" → minutes, "h" → hours, "d" → days.
  */
-const parseExpiryString = (expiry: string): { value: number; unit: dayjs.ManipulateType } => {
+const parseExpiryString = (
+  expiry: string
+): { value: number; unit: dayjs.ManipulateType } => {
   const match = expiry.match(/^(\d+)([smhd])$/);
   if (!match) {
     throw new Error("Invalid expiry format. Use '15m', '1h', '7d', etc.");
@@ -35,20 +37,23 @@ export const storeRefreshToken = async (
   token: string,
   expiresIn: string
 ): Promise<PrismaToken> => {
-    const existingToken = await prisma.token.findUnique({
-    where: { userId },
+  const existingToken = await prisma.token.findUnique({
+    where: { userId, revoked: false, expiryDate: { gt: new Date() } },
   });
 
   if (existingToken) {
-    console.log(`Refresh token already exists for user ${userId}, using existing token.`);
+    console.log(
+      `Refresh token already exists for user ${userId}, using existing token.`
+    );
     return existingToken;
   }
 
-
   const { value, unit } = parseExpiryString(expiresIn);
   const expiryDate = dayjs().add(value, unit).toDate();
-  console.log(`Storing refresh token for user ${userId} with expiry ${expiryDate}`);
-  
+  console.log(
+    `Storing refresh token for user ${userId} with expiry ${expiryDate}`
+  );
+
   return prisma.token.create({
     data: {
       userId,
@@ -65,16 +70,7 @@ export const storeRefreshToken = async (
  *  - not revoked
  *  - expiryDate > now
  */
-export const findValidRefreshToken = async (token: string): Promise<PrismaToken | null> => {
-  const record = await prisma.token.findFirst({
-    where: {
-      token,
-      revoked: false,
-      expiryDate: { gt: new Date() },
-    },
-  });
-  return record;
-};
+  
 
 /**
  * Revokes a given refresh‐token (sets revoked = true).

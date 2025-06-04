@@ -9,14 +9,15 @@ dotenv.config();
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET!;
 const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET!;
-const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN! || "15m"; // e.g., "15m"
-const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN! || "1d"; // e.g., "1d"
+const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN! || "1m"; // e.g., "15m"
+const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN! || "2d"; // e.g., "1d"
 
 /**
  * Generates a signed Access Token (short‐lived).
  * Payload contains: { id, role }
  */
 export const generateAccessToken = (userId: string, role: string): string => {
+
   const options: SignOptions = {
     expiresIn: ACCESS_EXPIRES_IN as ms.StringValue,
     algorithm: "HS256",
@@ -41,8 +42,11 @@ export const generateRefreshToken = (userId: string, role: string): string => {
  */
 export const verifyAccessToken = (token: string): JwtPayload | null => {
   try {
-    return jwt.verify(token, ACCESS_SECRET) as JwtPayload;
-  } catch {
+    return jwt.verify(token, ACCESS_SECRET, {
+      algorithms: ["HS256"],
+    }) as JwtPayload;
+  } catch (err:any) {
+    console.error("Error message:", err);
     return null;
   }
 };
@@ -52,21 +56,25 @@ export const verifyAccessToken = (token: string): JwtPayload | null => {
  */
 export const verifyRefreshToken = (token: string): JwtPayload | null => {
   try {
-    return jwt.verify(token, REFRESH_SECRET) as JwtPayload;
-  } catch {
+  
+    return jwt.verify(token, REFRESH_SECRET, {
+      algorithms: ["HS256"],
+    }) as JwtPayload;
+  } catch(err:any) {
+    console.error("Error message:", err);
     return null;
   }
 };
 
 export const authenticateUser = (
-  req: Request & AuthenticatedRequest,
+  req: Request , // & AuthenticatedRequest
   res: Response,
   next: NextFunction
-): void => {
+) => {
   try {
     let token: string | undefined;
     token = req.cookies?.rJmkAxzNakU;
-
+    // console.log("\n\n\n\ntoken--->", token);
     // 2. Fallback to cookie
     if (!token) {
       const authHeader = req.headers.authorization;

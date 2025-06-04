@@ -10,8 +10,8 @@ const httpResponse_1 = require("../../utils/httpResponse");
 dotenv_1.default.config();
 const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
-const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "15m";
-const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "1d";
+const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "1m";
+const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "2d";
 const generateAccessToken = (userId, role) => {
     const options = {
         expiresIn: ACCESS_EXPIRES_IN,
@@ -30,18 +30,24 @@ const generateRefreshToken = (userId, role) => {
 exports.generateRefreshToken = generateRefreshToken;
 const verifyAccessToken = (token) => {
     try {
-        return jsonwebtoken_1.default.verify(token, ACCESS_SECRET);
+        return jsonwebtoken_1.default.verify(token, ACCESS_SECRET, {
+            algorithms: ["HS256"],
+        });
     }
-    catch {
+    catch (err) {
+        console.error("Error message:", err);
         return null;
     }
 };
 exports.verifyAccessToken = verifyAccessToken;
 const verifyRefreshToken = (token) => {
     try {
-        return jsonwebtoken_1.default.verify(token, REFRESH_SECRET);
+        return jsonwebtoken_1.default.verify(token, REFRESH_SECRET, {
+            algorithms: ["HS256"],
+        });
     }
-    catch {
+    catch (err) {
+        console.error("Error message:", err);
         return null;
     }
 };

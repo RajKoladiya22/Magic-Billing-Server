@@ -2,10 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { checkStaticToken } from "./core/middleware/key";
-import routes from "./routes/index";
-
-// import path from "path";
-// import fs from "fs";
+import routes from "./routes";
 
 const app = express();
 

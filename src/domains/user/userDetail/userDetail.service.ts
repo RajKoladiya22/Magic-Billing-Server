@@ -1,5 +1,5 @@
-import { prisma } from "../../config/database.config";
-import { IUserDetailInput, IUserDetail } from "../../interfaces/userDetail.interface";
+import { prisma } from "../../../config/database.config";
+import { IUserDetailInput, IUserDetail } from "../../../interfaces/userDetail.interface";
 
 /** Create or update (upsert) user detail */
 export const upsertUserDetail = async (

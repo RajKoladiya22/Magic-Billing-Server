@@ -1,0 +1,7 @@
+import { Request, Response, NextFunction } from "express";
+import { SendOtpRequestBody, SigninRequestBody, SignupRequestBody, VerifyOtpRequestBody } from "../../../interfaces/auth.interfaces";
+export declare const sendOtpHandler: (req: Request<{}, {}, SendOtpRequestBody>, res: Response, next: NextFunction) => Promise<void>;
+export declare const verifyOtpHandler: (req: Request<{}, {}, VerifyOtpRequestBody>, res: Response, next: NextFunction) => Promise<void>;
+export declare const signupHandler: (req: Request<{}, {}, SignupRequestBody>, res: Response, next: NextFunction) => Promise<void>;
+export declare const signinHandler: (req: Request<{}, {}, SigninRequestBody>, res: Response, next: NextFunction) => Promise<void>;
+export declare const refreshAccessTokenHandler: (req: Request, res: Response, next: NextFunction) => Promise<void>;

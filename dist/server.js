@@ -9,6 +9,7 @@ const app_1 = __importDefault(require("./app"));
 const database_config_1 = require("./config/database.config");
 const logger_1 = require("./core/help/logs/logger");
 const httpResponse_1 = require("./core/utils/httpResponse");
+require('module-alias/register');
 (0, env_config_1.envConfiguration)();
 const env = validate_env_1.validatedEnv;
 app_1.default.use("/", (req, res) => {
