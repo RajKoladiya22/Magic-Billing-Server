@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.revokeRefreshToken = exports.storeRefreshToken = void 0;
+exports.revokeRefreshToken = exports.findValidRefreshToken = exports.storeRefreshToken = void 0;
 const user_model_1 = require("./user.model");
 const dayjs_1 = __importDefault(require("dayjs"));
 const parseExpiryString = (expiry) => {
@@ -42,6 +42,17 @@ const storeRefreshToken = async (userId, token, expiresIn) => {
     });
 };
 exports.storeRefreshToken = storeRefreshToken;
+const findValidRefreshToken = async (userId) => {
+    const record = await user_model_1.prisma.token.findFirst({
+        where: {
+            userId,
+            revoked: false,
+            expiryDate: { gt: new Date() },
+        },
+    });
+    return record;
+};
+exports.findValidRefreshToken = findValidRefreshToken;
 const revokeRefreshToken = async (token) => {
     await user_model_1.prisma.token.updateMany({
         where: { token },

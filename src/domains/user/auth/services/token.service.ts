@@ -40,7 +40,8 @@ export const storeRefreshToken = async (
   const existingToken = await prisma.token.findUnique({
     where: { userId, revoked: false, expiryDate: { gt: new Date() } },
   });
-
+  // console.log("existingToken----> \n", existingToken);
+  
   if (existingToken) {
     console.log(
       `Refresh token already exists for user ${userId}, using existing token.`
@@ -53,6 +54,8 @@ export const storeRefreshToken = async (
   console.log(
     `Storing refresh token for user ${userId} with expiry ${expiryDate}`
   );
+  // console.log("\n expiryDate----> \n", expiryDate);
+  // console.log("\n userId----> \n", userId);
 
   return prisma.token.create({
     data: {
@@ -70,7 +73,16 @@ export const storeRefreshToken = async (
  *  - not revoked
  *  - expiryDate > now
  */
-  
+  export const findValidRefreshToken = async (userId: string): Promise<PrismaToken | null> => {
+  const record = await prisma.token.findFirst({
+    where: {
+      userId,
+      revoked: false,
+      expiryDate: { gt: new Date() },
+    },
+  });
+  return record;
+};
 
 /**
  * Revokes a given refresh‐token (sets revoked = true).

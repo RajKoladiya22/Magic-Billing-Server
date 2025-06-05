@@ -1,15 +1,18 @@
+import { Prisma } from "@prisma/client";
+
 export interface IUserDetailInput {
-  companyName?: string;
-  gstNumber?: string;
-  panNumber?: string;
-  businessEmail?: string;
-  phoneNumber?: string;
-  alternativePhoneNumber?: string;
-  website?: string;
-  billingAddress?: Record<string, any>;
-  shippingAddress?: Record<string, any>;
-  signatureImages?: any[]; // You can define a stricter shape if needed
+  companyName?: string | null;
+  gstNumber?: string | null;
+  panNumber?: string | null;
+  businessEmail?: string | null;
+  phoneNumber?: string | null;
+  alternativePhoneNumber?: string | null;
+  website?: string | null;
+  billingAddress?: any;
+  shippingAddress?: any;
+  signatureImages?: any;
 }
+
 
 export interface IUserDetail extends IUserDetailInput {
   id: string;

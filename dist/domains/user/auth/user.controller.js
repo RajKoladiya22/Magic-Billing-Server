@@ -45,8 +45,8 @@ const token_service_1 = require("./services/token.service");
 const cookie_1 = require("../../../core/middleware/cookie");
 const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 dotenv_1.default.config();
-const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN;
-const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
+const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "1h";
+const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET || "10m";
 const sendOtpHandler = async (req, res, next) => {
     try {
         const { email } = req.body;
@@ -170,7 +170,6 @@ const refreshAccessTokenHandler = async (req, res, next) => {
             payload = jsonwebtoken_1.default.verify(accessToken, ACCESS_SECRET, {
                 algorithms: ["HS256"],
             });
-            console.log("\n\n\n\n payload--->", payload);
         }
         catch (err) {
             if (err instanceof jsonwebtoken_1.TokenExpiredError) {
@@ -185,7 +184,7 @@ const refreshAccessTokenHandler = async (req, res, next) => {
             (0, httpResponse_1.sendErrorResponse)(res, 401, "Invalid or malformed refresh token.");
             return;
         }
-        const stored = await findValidRefreshToken(payload === null || payload === void 0 ? void 0 : payload.id);
+        const stored = await (0, token_service_1.findValidRefreshToken)(payload === null || payload === void 0 ? void 0 : payload.id);
         if (!stored) {
             (0, httpResponse_1.sendErrorResponse)(res, 401, "Refresh token invalid or expired.");
             return;

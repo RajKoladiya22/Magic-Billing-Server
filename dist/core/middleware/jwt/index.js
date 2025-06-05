@@ -10,8 +10,8 @@ const httpResponse_1 = require("../../utils/httpResponse");
 dotenv_1.default.config();
 const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
-const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "1m";
-const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "2d";
+const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "10m";
+const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "1h";
 const generateAccessToken = (userId, role) => {
     const options = {
         expiresIn: ACCESS_EXPIRES_IN,
