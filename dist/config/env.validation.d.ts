@@ -9,25 +9,31 @@ export declare const envSchema: z.ZodObject<{
     JWT_REFRESH_EXPIRES_IN: z.ZodString;
     STATIC_TOKEN: z.ZodString;
     SALT_ROUNDS: z.ZodString;
+    SECRET_KEY: z.ZodString;
+    IV: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    JWT_REFRESH_EXPIRES_IN: string;
-    JWT_ACCESS_TOKEN_SECRET: string;
-    JWT_REFRESH_TOKEN_SECRET: string;
-    JWT_ACCESS_EXPIRES_IN: string;
-    NODE_ENV: "production" | "local" | "development";
-    SALT_ROUNDS: string;
+    NODE_ENV: "local" | "development" | "production";
     PORT: number;
     DATABASE_URL: string;
-    STATIC_TOKEN: string;
-}, {
-    JWT_REFRESH_EXPIRES_IN: string;
     JWT_ACCESS_TOKEN_SECRET: string;
     JWT_REFRESH_TOKEN_SECRET: string;
     JWT_ACCESS_EXPIRES_IN: string;
-    NODE_ENV: "production" | "local" | "development";
-    SALT_ROUNDS: string;
-    DATABASE_URL: string;
+    JWT_REFRESH_EXPIRES_IN: string;
     STATIC_TOKEN: string;
+    SALT_ROUNDS: string;
+    SECRET_KEY: string;
+    IV: string;
+}, {
+    NODE_ENV: "local" | "development" | "production";
+    DATABASE_URL: string;
+    JWT_ACCESS_TOKEN_SECRET: string;
+    JWT_REFRESH_TOKEN_SECRET: string;
+    JWT_ACCESS_EXPIRES_IN: string;
+    JWT_REFRESH_EXPIRES_IN: string;
+    STATIC_TOKEN: string;
+    SALT_ROUNDS: string;
+    SECRET_KEY: string;
+    IV: string;
     PORT?: unknown;
 }>;
 export type EnvVars = z.infer<typeof envSchema>;

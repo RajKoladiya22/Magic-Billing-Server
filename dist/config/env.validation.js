@@ -14,6 +14,8 @@ exports.envSchema = zod_1.z.object({
     JWT_ACCESS_EXPIRES_IN: zod_1.z.string(),
     JWT_REFRESH_EXPIRES_IN: zod_1.z.string(),
     STATIC_TOKEN: zod_1.z.string(),
-    SALT_ROUNDS: zod_1.z.string()
+    SALT_ROUNDS: zod_1.z.string(),
+    SECRET_KEY: zod_1.z.string(),
+    IV: zod_1.z.string()
 });
 //# sourceMappingURL=env.validation.js.map

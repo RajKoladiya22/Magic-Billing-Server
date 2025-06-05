@@ -8,7 +8,6 @@ import { sendSuccessResponse } from "./core/utils/httpResponse";
 require('module-alias/register');
 
 
-
 envConfiguration();
 const env = validatedEnv;
 

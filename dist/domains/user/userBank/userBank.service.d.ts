@@ -1,3 +1,4 @@
+import { UserBank } from "@prisma/client";
 export declare function createUserBank(userId: string, data: any): Promise<{
     id: string;
     createdAt: Date;
@@ -28,6 +29,7 @@ export declare function getUserBanks(userId: string): Promise<{
     notes: string[];
     isDefault: boolean;
 }[]>;
+export declare const getUserBankById: (id: string, userId: string) => Promise<UserBank | null>;
 export declare function updateUserBank(userId: string, id: string, data: any): Promise<{
     id: string;
     createdAt: Date;

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.envConfiguration = void 0;
 const validate_env_1 = require("./validate-env");
-const { NODE_ENV, PORT, DATABASE_URL, STATIC_TOKEN, SALT_ROUNDS, JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, JWT_ACCESS_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN, } = validate_env_1.validatedEnv;
+const { NODE_ENV, PORT, DATABASE_URL, STATIC_TOKEN, SALT_ROUNDS, JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, JWT_ACCESS_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN, SECRET_KEY, IV, } = validate_env_1.validatedEnv;
 const envConfiguration = () => ({
     nodeEnv: NODE_ENV,
     port: Number(PORT),
@@ -19,6 +19,8 @@ const envConfiguration = () => ({
             expiresIn: JWT_REFRESH_EXPIRES_IN,
         },
     },
+    secretKey: SECRET_KEY,
+    iv: IV,
 });
 exports.envConfiguration = envConfiguration;
 //# sourceMappingURL=env.config.js.map

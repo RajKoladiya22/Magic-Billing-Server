@@ -15,6 +15,8 @@ export interface EnvConfig {
         access: JwtTokenConfig;
         refresh: JwtTokenConfig;
     };
+    secretKey?: string;
+    iv?: string;
 }
 
 const {
@@ -27,6 +29,8 @@ const {
     JWT_REFRESH_TOKEN_SECRET,
     JWT_ACCESS_EXPIRES_IN,
     JWT_REFRESH_EXPIRES_IN,
+    SECRET_KEY,
+    IV,
 } = validatedEnv;
 
 export const envConfiguration = (): EnvConfig => ({
@@ -45,4 +49,6 @@ export const envConfiguration = (): EnvConfig => ({
             expiresIn: JWT_REFRESH_EXPIRES_IN,
         },
     },
+    secretKey: SECRET_KEY,
+    iv: IV,
 });

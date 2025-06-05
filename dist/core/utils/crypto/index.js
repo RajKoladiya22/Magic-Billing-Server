@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.decrypt = exports.encrypt = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const algorithm = 'aes-256-cbc';
-const secret = process.env.SECRET_KEY;
-const iv = Buffer.from(process.env.IV);
+const secret = process.env.SECRET_KEY || 'e86f449a48e5f1cbedae6a6fc6c92902';
+const iv = Buffer.from(process.env.IV) || 'e86f449a48e5f1cb';
 const encrypt = (text) => {
     const cipher = crypto_1.default.createCipheriv(algorithm, Buffer.from(secret), iv);
     let encrypted = cipher.update(text, 'utf-8', 'hex');

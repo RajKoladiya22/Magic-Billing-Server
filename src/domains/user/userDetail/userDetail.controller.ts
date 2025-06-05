@@ -19,7 +19,7 @@ export const createOrUpdateUserDetailHandler = async (
     const userId = req.user?.id;
     if (!userId) {
       sendErrorResponse(res, 401, "Unauthorized");
-      return;
+      return; 
     }
     if (!req.body || Object.keys(req.body).length === 0) {
       sendErrorResponse(res, 400, "No data provided to save.");

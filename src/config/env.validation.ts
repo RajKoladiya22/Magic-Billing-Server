@@ -19,7 +19,10 @@ export const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string(),
 
   STATIC_TOKEN: z.string(),
-  SALT_ROUNDS: z.string()
+  SALT_ROUNDS: z.string(),
+
+  SECRET_KEY: z.string(),
+  IV: z.string()
 });
 
 export type EnvVars = z.infer<typeof envSchema>;

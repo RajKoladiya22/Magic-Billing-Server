@@ -12,6 +12,8 @@ export interface EnvConfig {
         access: JwtTokenConfig;
         refresh: JwtTokenConfig;
     };
+    secretKey?: string;
+    iv?: string;
 }
 export declare const envConfiguration: () => EnvConfig;
 export {};
