@@ -5,3 +5,6 @@ export declare const verifyOtpHandler: (req: Request<{}, {}, VerifyOtpRequestBod
 export declare const signupHandler: (req: Request<{}, {}, SignupRequestBody>, res: Response, next: NextFunction) => Promise<void>;
 export declare const signinHandler: (req: Request<{}, {}, SigninRequestBody>, res: Response, next: NextFunction) => Promise<void>;
 export declare const refreshAccessTokenHandler: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+export declare const forgotPasswordHandler: (req: Request, res: Response) => Promise<void>;
+export declare const resetPasswordHandler: (req: Request, res: Response) => Promise<void>;
+export declare const changePasswordHandler: (req: Request, res: Response) => Promise<void>;

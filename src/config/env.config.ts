@@ -17,6 +17,7 @@ export interface EnvConfig {
     };
     secretKey?: string;
     iv?: string;
+    baseUrl?: string;
 }
 
 const {
@@ -31,6 +32,7 @@ const {
     JWT_REFRESH_EXPIRES_IN,
     SECRET_KEY,
     IV,
+    BASE_URL
 } = validatedEnv;
 
 export const envConfiguration = (): EnvConfig => ({
@@ -51,4 +53,5 @@ export const envConfiguration = (): EnvConfig => ({
     },
     secretKey: SECRET_KEY,
     iv: IV,
+    baseUrl: BASE_URL
 });

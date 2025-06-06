@@ -152,6 +152,15 @@ exports.Prisma.OTPScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PasswordResetScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  used: 'used',
+  createdAt: 'createdAt',
+  userId: 'userId'
+};
+
 exports.Prisma.UserDetailScalarFieldEnum = {
   id: 'id',
   companyName: 'companyName',
@@ -394,6 +403,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Token: 'Token',
   OTP: 'OTP',
+  PasswordReset: 'PasswordReset',
   UserDetail: 'UserDetail',
   UserBank: 'UserBank',
   NoteAndTerms: 'NoteAndTerms',

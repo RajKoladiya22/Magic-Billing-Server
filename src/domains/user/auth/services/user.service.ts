@@ -1,6 +1,6 @@
 // src/domains/user/service/user.service.ts
 
-import { prisma, OTP, User } from "./user.model";
+import { prisma, OTP, User } from "../user.model";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -175,6 +175,8 @@ export const signupUser = async (input: SignupInput): Promise<IUser> => {
 
 export const signinUser = async (input: SigninInput): Promise<User> => {
   const { email, password } = input;
+  console.log("signinUser called with email:", email);
+  console.log("signinUser called with password:", password);
   // 1. Find user by email
   const user = await prisma.user.findUnique({
     where: { email },

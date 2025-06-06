@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signinUser = exports.signupUser = exports.verifyOtp = exports.sendOtp = void 0;
-const user_model_1 = require("./user.model");
+const user_model_1 = require("../user.model");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -111,6 +111,8 @@ const signupUser = async (input) => {
 exports.signupUser = signupUser;
 const signinUser = async (input) => {
     const { email, password } = input;
+    console.log("signinUser called with email:", email);
+    console.log("signinUser called with password:", password);
     const user = await user_model_1.prisma.user.findUnique({
         where: { email },
         select: {

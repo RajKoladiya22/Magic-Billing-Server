@@ -22,7 +22,9 @@ export const envSchema = z.object({
   SALT_ROUNDS: z.string(),
 
   SECRET_KEY: z.string(),
-  IV: z.string()
+  IV: z.string(),
+
+  BASE_URL: z.string().url().optional(),
 });
 
 export type EnvVars = z.infer<typeof envSchema>;

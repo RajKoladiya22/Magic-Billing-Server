@@ -14,6 +14,7 @@ export interface EnvConfig {
     };
     secretKey?: string;
     iv?: string;
+    baseUrl?: string;
 }
 export declare const envConfiguration: () => EnvConfig;
 export {};

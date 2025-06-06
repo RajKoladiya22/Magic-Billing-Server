@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.cleanupExpiredTokensAndOtps = void 0;
 const database_config_1 = require("../../config/database.config");
 const dayjs_1 = __importDefault(require("dayjs"));
-console.log("[INIT] Cleanup job scheduled for 3 AM daily.");
+console.log("[INIT] Cleanup job scheduled in every 14 minutes.");
 const cleanupExpiredTokensAndOtps = async () => {
     const now = new Date();
     const before = (0, dayjs_1.default)().subtract(1, "day").toDate();
@@ -32,4 +32,7 @@ const cleanupExpiredTokensAndOtps = async () => {
     console.log(`[CLEANUP] Removed ${deletedOtps.count} used/expired OTPs.`);
 };
 exports.cleanupExpiredTokensAndOtps = cleanupExpiredTokensAndOtps;
+setInterval(() => {
+    (0, exports.cleanupExpiredTokensAndOtps)();
+}, 14 * 60 * 1000);
 //# sourceMappingURL=index.js.map

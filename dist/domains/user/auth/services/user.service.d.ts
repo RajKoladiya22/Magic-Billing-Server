@@ -1,4 +1,4 @@
-import { User } from "./user.model";
+import { User } from "../user.model";
 import { IUser, SignupInput, SigninInput } from "../../../../interfaces/auth.interfaces";
 export declare const sendOtp: (email: string) => Promise<void>;
 export declare const verifyOtp: (email: string, code: string) => Promise<void>;

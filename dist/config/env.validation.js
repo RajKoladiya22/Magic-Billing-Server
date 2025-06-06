@@ -16,6 +16,7 @@ exports.envSchema = zod_1.z.object({
     STATIC_TOKEN: zod_1.z.string(),
     SALT_ROUNDS: zod_1.z.string(),
     SECRET_KEY: zod_1.z.string(),
-    IV: zod_1.z.string()
+    IV: zod_1.z.string(),
+    BASE_URL: zod_1.z.string().url().optional(),
 });
 //# sourceMappingURL=env.validation.js.map

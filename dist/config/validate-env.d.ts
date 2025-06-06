@@ -10,4 +10,5 @@ export declare const validatedEnv: {
     SALT_ROUNDS: string;
     SECRET_KEY: string;
     IV: string;
+    BASE_URL?: string | undefined;
 };

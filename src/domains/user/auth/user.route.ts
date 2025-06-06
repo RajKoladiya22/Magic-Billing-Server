@@ -7,9 +7,12 @@ import {
   signupHandler,
   signinHandler,
   refreshAccessTokenHandler,
-} from "./user.controller";
-import { RequestHandler } from "express";
+  forgotPasswordHandler,
+  resetPasswordHandler,
+  changePasswordHandler
+} from "./controller/user.controller";
 import { authenticateUser } from "../../../core/middleware/jwt";
+import { processResetPasswordForm, renderResetPasswordForm } from "./controller/passwordResetView.controller";
 
 const router = express.Router();
 
@@ -36,5 +39,29 @@ router.post("/signin", signinHandler);
 
 // Refresh Access Token
 router.post("/refresh-token", refreshAccessTokenHandler);
+
+
+/**
+ * Public endpoint to request a password reset email.
+ * POST /auth/forgot-password
+ */
+router.post("/forgot-password", forgotPasswordHandler);
+
+/**
+ * Public endpoint to reset password using token.
+ * POST /auth/reset-password
+ */
+router.post("/reset-password-json", resetPasswordHandler);
+
+/**
+ * Protected endpoint to change password with old password.
+ * POST /auth/change-password
+ */
+router.post("/change-password", authenticateUser, changePasswordHandler);
+
+
+router.post("/reset-password", processResetPasswordForm); 
+
+router.get("/reset-password", renderResetPasswordForm);
 
 export default router;

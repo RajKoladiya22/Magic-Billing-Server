@@ -11,6 +11,7 @@ export declare const envSchema: z.ZodObject<{
     SALT_ROUNDS: z.ZodString;
     SECRET_KEY: z.ZodString;
     IV: z.ZodString;
+    BASE_URL: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     NODE_ENV: "local" | "development" | "production";
     PORT: number;
@@ -23,6 +24,7 @@ export declare const envSchema: z.ZodObject<{
     SALT_ROUNDS: string;
     SECRET_KEY: string;
     IV: string;
+    BASE_URL?: string | undefined;
 }, {
     NODE_ENV: "local" | "development" | "production";
     DATABASE_URL: string;
@@ -35,5 +37,6 @@ export declare const envSchema: z.ZodObject<{
     SECRET_KEY: string;
     IV: string;
     PORT?: unknown;
+    BASE_URL?: string | undefined;
 }>;
 export type EnvVars = z.infer<typeof envSchema>;

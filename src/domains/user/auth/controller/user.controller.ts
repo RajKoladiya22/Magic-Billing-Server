@@ -6,11 +6,11 @@ import {
   verifyOtp,
   signupUser,
   signinUser,
-} from "./services/user.service";
+} from "../services/user.service";
 import {
   sendSuccessResponse,
   sendErrorResponse,
-} from "../../../core/utils/httpResponse";
+} from "../../../../core/utils/httpResponse";
 import dotenv from "dotenv";
 
 // Import new JWT utilities:
@@ -19,21 +19,27 @@ import {
   generateRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
-} from "../../../core/middleware/jwt";
+} from "../../../../core/middleware/jwt";
+
+import {
+  forgotPassword,
+  resetPassword,
+  changePassword,
+} from "../services/passwordReset.service";
 
 // Import the Token service to persist / validate refresh‐tokens:
 import {
   findValidRefreshToken,
   storeRefreshToken,
   // findValidRefreshToken,
-} from "./services/token.service";
-import { setRefreshTokenCookie } from "../../../core/middleware/cookie";
+} from "../services/token.service";
+import { setRefreshTokenCookie } from "../../../../core/middleware/cookie";
 import {
   SendOtpRequestBody,
   SigninRequestBody,
   SignupRequestBody,
   VerifyOtpRequestBody,
-} from "../../../interfaces/auth.interfaces";
+} from "../../../../interfaces/auth.interfaces";
 import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 
 dotenv.config();
@@ -221,9 +227,9 @@ export const refreshAccessTokenHandler = async (
         accessToken = authHeader.split(" ")[1];
       }
     }
-    
+
     if (!accessToken) {
-      sendErrorResponse(res, 401, "Refresh token missing.");
+      sendErrorResponse(res, 401, "Access token missing.");
       return;
     }
 
@@ -267,6 +273,7 @@ export const refreshAccessTokenHandler = async (
       },
     });
   } catch (err: any) {
+    console.log("Error in refreshAccessTokenHandler:", err);
     sendErrorResponse(
       res,
       401,
@@ -274,3 +281,72 @@ export const refreshAccessTokenHandler = async (
     );
   }
 };
+
+
+
+/**
+ * POST /auth/forgot-password
+ * Body: { email }
+ * Initiates a password reset by emailing the user a one-time token
+ */
+export const forgotPasswordHandler = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      sendErrorResponse(res, 400, "Email is required.");
+      return;
+    }
+    await forgotPassword(email);
+    sendSuccessResponse(res, 200, "Password reset email sent.", {});
+  } catch (err: any) {
+    sendErrorResponse(res, 400, err.message || "Failed to initiate password reset.");
+  }
+};
+
+
+/**
+ * POST /auth/reset-password
+ * Body: { userId, token, newPassword }
+ * Completes the reset flow by verifying token and updating password
+ */
+export const resetPasswordHandler = async (req: Request, res: Response) => {
+  try {
+    const { userId, token, newPassword } = req.body;
+    // console.log("Reset password request:", { userId, token, newPassword });
+    if (!userId || !token || !newPassword) {
+      sendErrorResponse(res, 400, "userId, token, and newPassword are required.");
+      return
+    }
+    await resetPassword(userId, token, newPassword);
+    sendSuccessResponse(res, 200, "Password has been reset successfully.", {});
+  } catch (err: any) {
+    sendErrorResponse(res, 400, err.message || "Failed to reset password.");
+  }
+};
+
+/**
+ * POST /auth/change-password
+ * Protected route; user must be authenticated (req.user.id)
+ * Body: { oldPassword, newPassword }
+ * Updates password after verifying old password
+ */
+export const changePasswordHandler = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { oldPassword, newPassword } = req.body;
+    if (!userId) {
+      sendErrorResponse(res, 401, "Unauthorized");
+      return
+    }
+    if (!oldPassword || !newPassword) {
+      sendErrorResponse(res, 400, "oldPassword and newPassword are required.");
+      return
+    }
+    await changePassword(userId, oldPassword, newPassword);
+
+    sendSuccessResponse(res, 200, "Password changed successfully.", {});
+  } catch (err: any) {
+    sendErrorResponse(res, 400, err.message || "Failed to change password.");
+  }
+};
+

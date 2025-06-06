@@ -36,11 +36,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshAccessTokenHandler = exports.signinHandler = exports.signupHandler = exports.verifyOtpHandler = exports.sendOtpHandler = void 0;
+exports.changePasswordHandler = exports.resetPasswordHandler = exports.forgotPasswordHandler = exports.refreshAccessTokenHandler = exports.signinHandler = exports.signupHandler = exports.verifyOtpHandler = exports.sendOtpHandler = void 0;
 const user_service_1 = require("./services/user.service");
 const httpResponse_1 = require("../../../core/utils/httpResponse");
 const dotenv_1 = __importDefault(require("dotenv"));
 const jwt_1 = require("../../../core/middleware/jwt");
+const passwordReset_service_1 = require("./services/passwordReset.service");
 const token_service_1 = require("./services/token.service");
 const cookie_1 = require("../../../core/middleware/cookie");
 const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
@@ -162,7 +163,7 @@ const refreshAccessTokenHandler = async (req, res, next) => {
             }
         }
         if (!accessToken) {
-            (0, httpResponse_1.sendErrorResponse)(res, 401, "Refresh token missing.");
+            (0, httpResponse_1.sendErrorResponse)(res, 401, "Access token missing.");
             return;
         }
         let payload = null;
@@ -198,8 +199,61 @@ const refreshAccessTokenHandler = async (req, res, next) => {
         });
     }
     catch (err) {
+        console.log("Error in refreshAccessTokenHandler:", err);
         (0, httpResponse_1.sendErrorResponse)(res, 401, err.message || "Failed to refresh access token.");
     }
 };
 exports.refreshAccessTokenHandler = refreshAccessTokenHandler;
+const forgotPasswordHandler = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            (0, httpResponse_1.sendErrorResponse)(res, 400, "Email is required.");
+            return;
+        }
+        await (0, passwordReset_service_1.forgotPassword)(email);
+        (0, httpResponse_1.sendSuccessResponse)(res, 200, "Password reset email sent.", {});
+    }
+    catch (err) {
+        (0, httpResponse_1.sendErrorResponse)(res, 400, err.message || "Failed to initiate password reset.");
+    }
+};
+exports.forgotPasswordHandler = forgotPasswordHandler;
+const resetPasswordHandler = async (req, res) => {
+    try {
+        const { userId, token, newPassword } = req.body;
+        console.log("Reset password request:", { userId, token, newPassword });
+        if (!userId || !token || !newPassword) {
+            (0, httpResponse_1.sendErrorResponse)(res, 400, "userId, token, and newPassword are required.");
+            return;
+        }
+        await (0, passwordReset_service_1.resetPassword)(userId, token, newPassword);
+        (0, httpResponse_1.sendSuccessResponse)(res, 200, "Password has been reset successfully.", {});
+    }
+    catch (err) {
+        (0, httpResponse_1.sendErrorResponse)(res, 400, err.message || "Failed to reset password.");
+    }
+};
+exports.resetPasswordHandler = resetPasswordHandler;
+const changePasswordHandler = async (req, res) => {
+    var _a;
+    try {
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const { oldPassword, newPassword } = req.body;
+        if (!userId) {
+            (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
+            return;
+        }
+        if (!oldPassword || !newPassword) {
+            (0, httpResponse_1.sendErrorResponse)(res, 400, "oldPassword and newPassword are required.");
+            return;
+        }
+        await (0, passwordReset_service_1.changePassword)(userId, oldPassword, newPassword);
+        (0, httpResponse_1.sendSuccessResponse)(res, 200, "Password changed successfully.", {});
+    }
+    catch (err) {
+        (0, httpResponse_1.sendErrorResponse)(res, 400, err.message || "Failed to change password.");
+    }
+};
+exports.changePasswordHandler = changePasswordHandler;
 //# sourceMappingURL=user.controller.js.map

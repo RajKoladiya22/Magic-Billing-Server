@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import cron from "node-cron";
 
 
-console.log("[INIT] Cleanup job scheduled for 3 AM daily.");
+console.log("[INIT] Cleanup job scheduled in every 14 minutes.");
 
 export const cleanupExpiredTokensAndOtps = async () => {
   const now = new Date();
@@ -31,6 +31,10 @@ export const cleanupExpiredTokensAndOtps = async () => {
   console.log(`[CLEANUP] Removed ${deletedTokens.count} expired tokens.`);
   console.log(`[CLEANUP] Removed ${deletedOtps.count} used/expired OTPs.`);
 };
+
+setInterval(() => {
+  cleanupExpiredTokensAndOtps();
+}, 14 * 60 * 1000);
 
 // cleanupExpiredTokensAndOtps();
 

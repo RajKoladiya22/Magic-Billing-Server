@@ -1,6 +1,6 @@
 // src/domains/user/service/token.service.ts
 
-import { prisma } from "./user.model";
+import { prisma } from "../user.model";
 import { Token as PrismaToken } from "@prisma/client";
 import dayjs from "dayjs";
 
@@ -40,7 +40,8 @@ export const storeRefreshToken = async (
   const existingToken = await prisma.token.findUnique({
     where: { userId, revoked: false, expiryDate: { gt: new Date() } },
   });
-  // console.log("existingToken----> \n", existingToken);
+  // console.log("\n\n existingToken----> \n", existingToken);
+  // console.log("\n\n new Date()----> \n", new Date());
   
   if (existingToken) {
     console.log(
@@ -51,11 +52,12 @@ export const storeRefreshToken = async (
 
   const { value, unit } = parseExpiryString(expiresIn);
   const expiryDate = dayjs().add(value, unit).toDate();
-  console.log(
-    `Storing refresh token for user ${userId} with expiry ${expiryDate}`
-  );
+  // console.log(
+  //   `Storing refresh token for user ${userId} with expiry ${expiryDate}`
+  // );
   // console.log("\n expiryDate----> \n", expiryDate);
   // console.log("\n userId----> \n", userId);
+  // console.log("\n token----> \n", token);
 
   return prisma.token.create({
     data: {

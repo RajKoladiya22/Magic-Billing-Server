@@ -76,15 +76,16 @@ model User {
   isVerified Boolean  @default(false) // Email verification status
 
   // Tenant-scoped relations
-  tokens        Token[]
-  detail        UserDetail?
-  banks         UserBank[]
-  noteAndTerms  NoteAndTerms?
-  customColumns CustomColumn[]
-  customers     Customer[]
-  categories    Category[]
-  products      Product[]
-  bills         Bill[]
+  tokens         Token[]
+  passwordResets PasswordReset[]
+  detail         UserDetail?
+  banks          UserBank[]
+  noteAndTerms   NoteAndTerms?
+  customColumns  CustomColumn[]
+  customers      Customer[]
+  categories     Category[]
+  products       Product[]
+  bills          Bill[]
 }
 
 /// Authentication tokens (e.g. refresh or API tokens)
@@ -110,6 +111,17 @@ model OTP {
 
   @@index([email]) // to efficiently query by email
   @@index([email, code]) // to efficiently verify code
+}
+
+model PasswordReset {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tokenHash String   @unique // SHA256 hash of the reset token
+  expiresAt DateTime // Expiration timestamp
+  used      Boolean  @default(false) // Ensures single use
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
 }
 
 /// Extended company/profile information for a User (1:1)

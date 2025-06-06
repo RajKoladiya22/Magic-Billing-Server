@@ -54,12 +54,17 @@ exports.listHandler = listHandler;
 const detailHandler = async (req, res) => {
     var _a;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    const { id } = req.params;
+    if (!id) {
+        (0, httpResponse_1.sendErrorResponse)(res, 400, "Bank ID is required");
+        return;
+    }
     if (!userId) {
         (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
         return;
     }
     try {
-        const bank = await (0, userBank_service_1.getUserBankById)(req.params.id, userId);
+        const bank = await (0, userBank_service_1.getUserBankById)(id, userId);
         (0, httpResponse_1.sendSuccessResponse)(res, 200, "User Bank detail fetched.", bank);
     }
     catch (error) {
@@ -101,8 +106,8 @@ const deleteHandler = async (req, res) => {
         return;
     }
     try {
-        await (0, userBank_service_1.deleteUserBank)(userId, req.params.id);
-        (0, httpResponse_1.sendSuccessResponse)(res, 200, "User Bank detail deleted.");
+        const deleted = await (0, userBank_service_1.deleteUserBank)(userId, req.params.id);
+        (0, httpResponse_1.sendSuccessResponse)(res, 200, "User Bank detail deleted.", deleted);
     }
     catch (error) {
         if (error instanceof Error) {

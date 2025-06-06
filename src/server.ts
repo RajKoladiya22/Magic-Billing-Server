@@ -6,12 +6,12 @@ import { shutdownDb } from "./config/database.config";
 import { logger } from "./core/help/logs/logger";
 import { sendSuccessResponse } from "./core/utils/httpResponse";
 require('module-alias/register');
+import bodyParser from "body-parser";
 
 
 envConfiguration();
 const env = validatedEnv;
 
-// console.log(env);
 
 app.use("/", (req, res) => {
   sendSuccessResponse(res, 200, "Base route is working", {
