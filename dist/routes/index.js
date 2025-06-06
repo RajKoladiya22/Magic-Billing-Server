@@ -8,10 +8,14 @@ const user_route_1 = __importDefault(require("../domains/user/auth/user.route"))
 const userDetail_route_1 = __importDefault(require("../domains/user/userDetail/userDetail.route"));
 const userBank_route_1 = __importDefault(require("../domains/user/userBank/userBank.route"));
 const noteAndTerms_route_1 = __importDefault(require("../domains/user/noteAndTerms/noteAndTerms.route"));
+const units_routes_1 = __importDefault(require("../domains/units/units.routes"));
+const categories_routes_1 = __importDefault(require("../domains/user/categories/categories.routes"));
 const router = express_1.default.Router();
 router.use("/auth", user_route_1.default);
 router.use("/user-detail", userDetail_route_1.default);
 router.use("/user-banks", userBank_route_1.default);
 router.use("/note-terms", noteAndTerms_route_1.default);
+router.use("/units", units_routes_1.default);
+router.use("/categories", categories_routes_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map
