@@ -26,10 +26,20 @@ const corsOptions = {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
 
+const whitelist = [
+  "/api/v1/auth/reset-password",
+];
+
 
 app.use(requestLogger);
-// app.use(checkStaticToken);
+app.use(checkStaticToken(whitelist));
 app.use(cookieParser());
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({ success: false, message: "Invalid JSON payload." });
+  }
+  next();
+});
 
 
 app.use("/api/v1", routes);

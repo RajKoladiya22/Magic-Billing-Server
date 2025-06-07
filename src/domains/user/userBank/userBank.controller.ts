@@ -15,12 +15,12 @@ import {
 import { createUserBankSchema } from "./userBank.schema";
 
 export const createHandler = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    sendErrorResponse(res, 401, "Unauthorized");
+    return;
+  }
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      sendErrorResponse(res, 401, "Unauthorized");
-      return;
-    }
     // console.log("req.body--->", req.body);
     
     const parsed = createUserBankSchema.safeParse(req.body);
@@ -42,12 +42,12 @@ export const createHandler = async (req: Request, res: Response) => {
 };
 
 export const listHandler = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    sendErrorResponse(res, 401, "Unauthorized");
+    return;
+  }
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      sendErrorResponse(res, 401, "Unauthorized");
-      return;
-    }
     const banks = await getUserBanks(userId);
     sendSuccessResponse(res, 200, "User Bank detail list.", banks);
   } catch (error) {

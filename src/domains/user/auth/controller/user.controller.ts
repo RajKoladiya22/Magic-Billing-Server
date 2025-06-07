@@ -45,7 +45,7 @@ import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 dotenv.config();
 
 const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN! || "1h"; // e.g. "7d"
-const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET! || "10m";
+const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET! || "10m"; 
 
 /**
  * POST /auth/send-otp

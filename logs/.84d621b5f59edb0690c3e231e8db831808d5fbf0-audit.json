@@ -29,6 +29,11 @@
             "date": 1749148304185,
             "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-06.log",
             "hash": "bce20701ca6a5566077f738a5f04c5a970ce6065031fb91a8229ed1529b51d3f"
+        },
+        {
+            "date": 1749283705286,
+            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-07.log",
+            "hash": "ec5473a96aa7b997761b57350108b50b0ecef83cfc7bb8030f56b25f48a21a15"
         }
     ],
     "hashType": "sha256"

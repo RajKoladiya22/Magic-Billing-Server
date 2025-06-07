@@ -246,7 +246,7 @@ model Product {
   onlinestore   Boolean     @default(true)
   notForSale    Boolean     @default(false)
   default       Boolean     @default(false)
-  images        String[]    @default([])
+  images        Json?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

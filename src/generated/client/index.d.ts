@@ -14171,7 +14171,7 @@ export namespace Prisma {
     onlinestore: boolean
     notForSale: boolean
     default: boolean
-    images: string[]
+    images: JsonValue | null
     createdAt: Date
     updatedAt: Date
     userId: string
@@ -14343,7 +14343,7 @@ export namespace Prisma {
       onlinestore: boolean
       notForSale: boolean
       default: boolean
-      images: string[]
+      images: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
       userId: string
@@ -14790,7 +14790,7 @@ export namespace Prisma {
     readonly onlinestore: FieldRef<"Product", 'Boolean'>
     readonly notForSale: FieldRef<"Product", 'Boolean'>
     readonly default: FieldRef<"Product", 'Boolean'>
-    readonly images: FieldRef<"Product", 'String[]'>
+    readonly images: FieldRef<"Product", 'Json'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
     readonly userId: FieldRef<"Product", 'String'>
@@ -20353,7 +20353,7 @@ export namespace Prisma {
     onlinestore?: BoolFilter<"Product"> | boolean
     notForSale?: BoolFilter<"Product"> | boolean
     default?: BoolFilter<"Product"> | boolean
-    images?: StringNullableListFilter<"Product">
+    images?: JsonNullableFilter<"Product">
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     userId?: UuidFilter<"Product"> | string
@@ -20380,7 +20380,7 @@ export namespace Prisma {
     onlinestore?: SortOrder
     notForSale?: SortOrder
     default?: SortOrder
-    images?: SortOrder
+    images?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -20410,7 +20410,7 @@ export namespace Prisma {
     onlinestore?: BoolFilter<"Product"> | boolean
     notForSale?: BoolFilter<"Product"> | boolean
     default?: BoolFilter<"Product"> | boolean
-    images?: StringNullableListFilter<"Product">
+    images?: JsonNullableFilter<"Product">
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     userId?: UuidFilter<"Product"> | string
@@ -20437,7 +20437,7 @@ export namespace Prisma {
     onlinestore?: SortOrder
     notForSale?: SortOrder
     default?: SortOrder
-    images?: SortOrder
+    images?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -20468,7 +20468,7 @@ export namespace Prisma {
     onlinestore?: BoolWithAggregatesFilter<"Product"> | boolean
     notForSale?: BoolWithAggregatesFilter<"Product"> | boolean
     default?: BoolWithAggregatesFilter<"Product"> | boolean
-    images?: StringNullableListFilter<"Product">
+    images?: JsonNullableWithAggregatesFilter<"Product">
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     userId?: UuidWithAggregatesFilter<"Product"> | string
@@ -21742,7 +21742,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProductsInput
@@ -21766,7 +21766,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -21790,7 +21790,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProductsNestedInput
@@ -21814,7 +21814,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -21838,7 +21838,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -21861,7 +21861,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21881,7 +21881,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -24185,10 +24185,6 @@ export namespace Prisma {
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type ProductCreateimagesInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutProductsInput = {
     create?: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProductsInput
@@ -24223,11 +24219,6 @@ export namespace Prisma {
 
   export type EnumProductTypeFieldUpdateOperationsInput = {
     set?: $Enums.ProductType
-  }
-
-  export type ProductUpdateimagesInput = {
-    set?: string[]
-    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutProductsNestedInput = {
@@ -25156,7 +25147,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     category?: CategoryCreateNestedOneWithoutProductsInput
@@ -25179,7 +25170,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     categoryId?: string | null
@@ -25560,7 +25551,7 @@ export namespace Prisma {
     onlinestore?: BoolFilter<"Product"> | boolean
     notForSale?: BoolFilter<"Product"> | boolean
     default?: BoolFilter<"Product"> | boolean
-    images?: StringNullableListFilter<"Product">
+    images?: JsonNullableFilter<"Product">
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     userId?: UuidFilter<"Product"> | string
@@ -26622,7 +26613,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProductsInput
@@ -26645,7 +26636,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -27038,7 +27029,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProductsInput
@@ -27061,7 +27052,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -27425,7 +27416,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProductsInput
@@ -27448,7 +27439,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -27556,7 +27547,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProductsNestedInput
@@ -27579,7 +27570,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -27671,7 +27662,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     categoryId?: string | null
@@ -27934,7 +27925,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneWithoutProductsNestedInput
@@ -27957,7 +27948,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27980,7 +27971,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28272,7 +28263,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -28294,7 +28285,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProductsNestedInput
@@ -28317,7 +28308,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -28340,7 +28331,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -28430,7 +28421,7 @@ export namespace Prisma {
     onlinestore?: boolean
     notForSale?: boolean
     default?: boolean
-    images?: ProductCreateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
@@ -28452,7 +28443,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProductsNestedInput
@@ -28475,7 +28466,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -28498,7 +28489,7 @@ export namespace Prisma {
     onlinestore?: BoolFieldUpdateOperationsInput | boolean
     notForSale?: BoolFieldUpdateOperationsInput | boolean
     default?: BoolFieldUpdateOperationsInput | boolean
-    images?: ProductUpdateimagesInput | string[]
+    images?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string

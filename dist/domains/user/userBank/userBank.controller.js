@@ -6,12 +6,12 @@ const httpResponse_1 = require("../../../core/utils/httpResponse");
 const userBank_schema_1 = require("./userBank.schema");
 const createHandler = async (req, res) => {
     var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
+        return;
+    }
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-        if (!userId) {
-            (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
-            return;
-        }
         const parsed = userBank_schema_1.createUserBankSchema.safeParse(req.body);
         if (!parsed.success) {
             (0, httpResponse_1.sendErrorResponse)(res, 400, "Invalid request data", parsed.error.errors);
@@ -32,12 +32,12 @@ const createHandler = async (req, res) => {
 exports.createHandler = createHandler;
 const listHandler = async (req, res) => {
     var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
+        return;
+    }
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-        if (!userId) {
-            (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
-            return;
-        }
         const banks = await (0, userBank_service_1.getUserBanks)(userId);
         (0, httpResponse_1.sendSuccessResponse)(res, 200, "User Bank detail list.", banks);
     }

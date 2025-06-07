@@ -3,11 +3,16 @@ import { Request, Response, NextFunction } from "express";
 import { validatedEnv } from "../../../config/validate-env";
 import { sendErrorResponse } from "../../utils/httpResponse";
 
-export const checkStaticToken = (
+export const checkStaticToken = 
+(whitelist: string[] = []) =>
+(
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
+  if (whitelist.some((path) => req.path === path || req.path.startsWith(path))) {
+      return next();
+    }
   try {
     const incoming = req.header("x-api-key") || req.header("authorization");      // get token header
     const expected = validatedEnv.STATIC_TOKEN;                                    // expected static token

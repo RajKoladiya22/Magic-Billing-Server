@@ -64,28 +64,28 @@ enum RoleType {
 
 /// Main User (tenant) model
 model User {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName String
-  lastName  String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  role      RoleType @default(USER) // Default role, can be ADMIN, USER, etc.
-  isActive  Boolean  @default(true) // Soft delete flag
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName  String
+  lastName   String
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  role       RoleType @default(USER) // Default role, can be ADMIN, USER, etc.
+  isActive   Boolean  @default(true) // Soft delete flag
   isVerified Boolean  @default(false) // Email verification status
-  
+
   // Tenant-scoped relations
-  tokens        Token[]
-  passwordResets   PasswordReset[]
-  detail        UserDetail?
-  banks         UserBank[]
-  noteAndTerms  NoteAndTerms?
-  customColumns CustomColumn[]
-  customers     Customer[]
-  categories    Category[]
-  products      Product[]
-  bills         Bill[]
+  tokens         Token[]
+  passwordResets PasswordReset[]
+  detail         UserDetail?
+  banks          UserBank[]
+  noteAndTerms   NoteAndTerms?
+  customColumns  CustomColumn[]
+  customers      Customer[]
+  categories     Category[]
+  products       Product[]
+  bills          Bill[]
 }
 
 /// Authentication tokens (e.g. refresh or API tokens)
@@ -114,14 +114,14 @@ model OTP {
 }
 
 model PasswordReset {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tokenHash   String   @unique                               // SHA256 hash of the reset token
-  expiresAt   DateTime                                  // Expiration timestamp
-  used        Boolean   @default(false)                   // Ensures single use
-  createdAt   DateTime  @default(now())
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tokenHash String   @unique // SHA256 hash of the reset token
+  expiresAt DateTime // Expiration timestamp
+  used      Boolean  @default(false) // Ensures single use
+  createdAt DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String    @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
 }
 
 /// Extended company/profile information for a User (1:1)
@@ -246,7 +246,7 @@ model Product {
   onlinestore   Boolean     @default(true)
   notForSale    Boolean     @default(false)
   default       Boolean     @default(false)
-  images        String[]    @default([])
+  images        Json?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
