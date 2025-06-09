@@ -42,13 +42,15 @@ export const storeRefreshToken = async (
   });
   // console.log("\n\n existingToken----> \n", existingToken);
   // console.log("\n\n new Date()----> \n", new Date());
-  
+
   if (existingToken) {
     console.log(
       `Refresh token already exists for user ${userId}, using existing token.`
     );
     return existingToken;
   }
+
+
 
   const { value, unit } = parseExpiryString(expiresIn);
   const expiryDate = dayjs().add(value, unit).toDate();
@@ -59,7 +61,11 @@ export const storeRefreshToken = async (
   // console.log("\n userId----> \n", userId);
   // console.log("\n token----> \n", token);
 
-  return prisma.token.create({
+  await prisma.token.deleteMany({
+    where: { userId },
+  });
+
+  return await prisma.token.create({
     data: {
       userId,
       token,
@@ -75,7 +81,7 @@ export const storeRefreshToken = async (
  *  - not revoked
  *  - expiryDate > now
  */
-  export const findValidRefreshToken = async (userId: string): Promise<PrismaToken | null> => {
+export const findValidRefreshToken = async (userId: string): Promise<PrismaToken | null> => {
   const record = await prisma.token.findFirst({
     where: {
       userId,

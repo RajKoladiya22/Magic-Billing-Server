@@ -31,7 +31,10 @@ const storeRefreshToken = async (userId, token, expiresIn) => {
     }
     const { value, unit } = parseExpiryString(expiresIn);
     const expiryDate = (0, dayjs_1.default)().add(value, unit).toDate();
-    return user_model_1.prisma.token.create({
+    await user_model_1.prisma.token.deleteMany({
+        where: { userId },
+    });
+    return await user_model_1.prisma.token.create({
         data: {
             userId,
             token,
