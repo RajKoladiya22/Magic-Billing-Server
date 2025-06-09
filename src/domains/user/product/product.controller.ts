@@ -11,6 +11,50 @@ import { log } from "console";
 
 const PAGE_SIZE = 10;
 
+// export const listProducts = async (req: Request, res: Response) => {
+//   const userId = req.user?.id;
+//   if (!userId) {
+//     sendErrorResponse(res, 401, "Unauthorized");
+//     return;
+//   }
+
+//   const search = (req.query.search as string) || "";
+//   const page = Math.max(1, parseInt((req.query.page as string) || "1"));
+
+//   try {
+//     const where: any = { userId };
+//     if (search) {
+//       where.OR = [
+//         { name: { contains: search, mode: "insensitive" } },
+//         { barcode: { contains: search, mode: "insensitive" } },
+//       ];
+//     }
+
+//     const [total, products] = await Promise.all([
+//       prisma.product.count({ where }),
+//       prisma.product.findMany({
+//         where,
+//         skip: (page - 1) * PAGE_SIZE,
+//         take: PAGE_SIZE,
+//         orderBy: { createdAt: "desc" },
+//       }),
+//     ]);
+
+//     sendSuccessResponse(res, 200, "Products fetched.", {
+//       total,
+//       page,
+//       pageSize: PAGE_SIZE,
+//       products,
+//     });
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       sendErrorResponse(res, 400, error.message);
+//     } else {
+//       sendErrorResponse(res, 500, "Failed to fatch product.");
+//     }
+//   }
+// };
+
 export const listProducts = async (req: Request, res: Response) => {
   const userId = req.user?.id;
   if (!userId) {
@@ -18,27 +62,50 @@ export const listProducts = async (req: Request, res: Response) => {
     return;
   }
 
-  const search = (req.query.search as string) || "";
+  // pagination
   const page = Math.max(1, parseInt((req.query.page as string) || "1"));
+  const PAGE_SIZE = 10;
+
+  // optional filters
+  const search = (req.query.search as string) || "";
+  const typeFilter = (req.query.type as string)?.toUpperCase();       // "PRODUCT" or "SERVICE"
+  const isActiveQuery = req.query.isActive as string | undefined;
+
+  // build the WHERE clause
+  const where: any = { userId };
+
+  where.isActive = true;
+
+   if (typeof isActiveQuery !== "undefined") {
+    if (isActiveQuery === "false") where.isActive = false;
+    else if (isActiveQuery === "true") where.isActive = true;
+    // if they pass something else, we ignore it and keep true
+  }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { barcode: { contains: search, mode: "insensitive" } },
+    ];
+  }
+  if (typeFilter === "PRODUCT" || typeFilter === "SERVICE") {
+    where.type = typeFilter;
+  }
 
   try {
-    const where: any = { userId };
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { barcode: { contains: search, mode: "insensitive" } },
-      ];
-    }
+    // count total matching
+    const total = await prisma.product.count({ where });
 
-    const [total, products] = await Promise.all([
-      prisma.product.count({ where }),
-      prisma.product.findMany({
-        where,
-        skip: (page - 1) * PAGE_SIZE,
-        take: PAGE_SIZE,
-        orderBy: { createdAt: "desc" },
-      }),
-    ]);
+    // fetch page, but order so that default=true come first
+    const products = await prisma.product.findMany({
+      where,
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      orderBy: [
+        { default: "desc" },        // default=true first
+        { createdAt: "desc" },      // then newest first
+      ],
+    });
 
     sendSuccessResponse(res, 200, "Products fetched.", {
       total,
@@ -50,7 +117,7 @@ export const listProducts = async (req: Request, res: Response) => {
     if (error instanceof Error) {
       sendErrorResponse(res, 400, error.message);
     } else {
-      sendErrorResponse(res, 500, "Failed to fatch product.");
+      sendErrorResponse(res, 500, "Failed to list product.");
     }
   }
 };
@@ -407,9 +474,9 @@ export const uploadImages = async (req: Request, res: Response) => {
     });
 
     sendSuccessResponse(res, 200, "Images uploaded successfully.", updated);
-  } catch (err) {
+  } catch (err:any) {
     console.error("uploadProductImages error:", err);
-    sendErrorResponse(res, 500, "Failed to upload images.");
+    sendErrorResponse(res, err instanceof Error ? 400 : 500, err.message || "Failed to upload images.");
   }
 };
 
@@ -461,8 +528,8 @@ export const deleteImages = async (req: Request, res: Response) => {
     });
 
     sendSuccessResponse(res, 200, "Images deleted successfully.", updated);
-  } catch (err) {
+  } catch (err:any) {
     console.error("deleteProductImages error:", err);
-    sendErrorResponse(res, 500, "Failed to delete images.");
+    sendErrorResponse(res, err instanceof Error ? 400 : 500, err.message || "Failed to delete product.");
   }
 };

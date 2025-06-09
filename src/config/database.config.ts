@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { config } from "dotenv";
-// import { encryptUserBankMiddleware } from "../core/middleware/encryptUserBank";
 config();
 
 export const env = process.env;
@@ -26,7 +25,6 @@ export const prisma =
     datasources: { db: { url: env.DATABASE_URL } },
   });
 
-  // prisma.$use(encryptUserBankMiddleware);
 
 if (env.NODE_ENV === "development") {
   global.__globalPrisma = prisma;

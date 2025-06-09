@@ -22,7 +22,7 @@ const parseExpiryString = (expiry) => {
     return { value, unit };
 };
 const storeRefreshToken = async (userId, token, expiresIn) => {
-    const existingToken = await user_model_1.prisma.token.findUnique({
+    const existingToken = await user_model_1.prisma.token.findFirst({
         where: { userId, revoked: false, expiryDate: { gt: new Date() } },
     });
     if (existingToken) {

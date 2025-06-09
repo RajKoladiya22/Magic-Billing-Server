@@ -37,7 +37,7 @@ export const storeRefreshToken = async (
   token: string,
   expiresIn: string
 ): Promise<PrismaToken> => {
-  const existingToken = await prisma.token.findUnique({
+  const existingToken = await prisma.token.findFirst({
     where: { userId, revoked: false, expiryDate: { gt: new Date() } },
   });
   // console.log("\n\n existingToken----> \n", existingToken);

@@ -7,31 +7,45 @@ const uploadToCloudinary_service_1 = require("./services/uploadToCloudinary.serv
 const uuid_1 = require("uuid");
 const PAGE_SIZE = 10;
 const listProducts = async (req, res) => {
-    var _a;
+    var _a, _b;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
     if (!userId) {
         (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
         return;
     }
-    const search = req.query.search || "";
     const page = Math.max(1, parseInt(req.query.page || "1"));
+    const PAGE_SIZE = 10;
+    const search = req.query.search || "";
+    const typeFilter = (_b = req.query.type) === null || _b === void 0 ? void 0 : _b.toUpperCase();
+    const isActiveQuery = req.query.isActive;
+    const where = { userId };
+    where.isActive = true;
+    if (typeof isActiveQuery !== "undefined") {
+        if (isActiveQuery === "false")
+            where.isActive = false;
+        else if (isActiveQuery === "true")
+            where.isActive = true;
+    }
+    if (search) {
+        where.OR = [
+            { name: { contains: search, mode: "insensitive" } },
+            { barcode: { contains: search, mode: "insensitive" } },
+        ];
+    }
+    if (typeFilter === "PRODUCT" || typeFilter === "SERVICE") {
+        where.type = typeFilter;
+    }
     try {
-        const where = { userId };
-        if (search) {
-            where.OR = [
-                { name: { contains: search, mode: "insensitive" } },
-                { barcode: { contains: search, mode: "insensitive" } },
-            ];
-        }
-        const [total, products] = await Promise.all([
-            database_config_1.prisma.product.count({ where }),
-            database_config_1.prisma.product.findMany({
-                where,
-                skip: (page - 1) * PAGE_SIZE,
-                take: PAGE_SIZE,
-                orderBy: { createdAt: "desc" },
-            }),
-        ]);
+        const total = await database_config_1.prisma.product.count({ where });
+        const products = await database_config_1.prisma.product.findMany({
+            where,
+            skip: (page - 1) * PAGE_SIZE,
+            take: PAGE_SIZE,
+            orderBy: [
+                { default: "desc" },
+                { createdAt: "desc" },
+            ],
+        });
         (0, httpResponse_1.sendSuccessResponse)(res, 200, "Products fetched.", {
             total,
             page,
@@ -44,7 +58,7 @@ const listProducts = async (req, res) => {
             (0, httpResponse_1.sendErrorResponse)(res, 400, error.message);
         }
         else {
-            (0, httpResponse_1.sendErrorResponse)(res, 500, "Failed to fatch product.");
+            (0, httpResponse_1.sendErrorResponse)(res, 500, "Failed to list product.");
         }
     }
 };
@@ -348,7 +362,7 @@ const uploadImages = async (req, res) => {
     }
     catch (err) {
         console.error("uploadProductImages error:", err);
-        (0, httpResponse_1.sendErrorResponse)(res, 500, "Failed to upload images.");
+        (0, httpResponse_1.sendErrorResponse)(res, err instanceof Error ? 400 : 500, err.message || "Failed to upload images.");
     }
 };
 exports.uploadImages = uploadImages;
@@ -388,7 +402,7 @@ const deleteImages = async (req, res) => {
     }
     catch (err) {
         console.error("deleteProductImages error:", err);
-        (0, httpResponse_1.sendErrorResponse)(res, 500, "Failed to delete images.");
+        (0, httpResponse_1.sendErrorResponse)(res, err instanceof Error ? 400 : 500, err.message || "Failed to delete product.");
     }
 };
 exports.deleteImages = deleteImages;
