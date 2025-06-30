@@ -19,6 +19,9 @@ CREATE TYPE "ProductType" AS ENUM ('PRODUCT', 'SERVICE');
 -- CreateEnum
 CREATE TYPE "ColumnType" AS ENUM ('TEXT', 'NUMBER', 'DATE', 'SELECT');
 
+-- CreateEnum
+CREATE TYPE "RoleType" AS ENUM ('USER');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
@@ -28,6 +31,9 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "role" "RoleType" NOT NULL DEFAULT 'USER',
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -42,6 +48,31 @@ CREATE TABLE "Token" (
     "userId" UUID NOT NULL,
 
     CONSTRAINT "Token_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "OTP" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "email" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "OTP_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PasswordReset" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "tokenHash" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" UUID NOT NULL,
+
+    CONSTRAINT "PasswordReset_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -162,7 +193,7 @@ CREATE TABLE "Product" (
     "onlinestore" BOOLEAN NOT NULL DEFAULT true,
     "notForSale" BOOLEAN NOT NULL DEFAULT false,
     "default" BOOLEAN NOT NULL DEFAULT false,
-    "images" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "images" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" UUID NOT NULL,
@@ -243,6 +274,15 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Token_userId_key" ON "Token"("userId");
 
 -- CreateIndex
+CREATE INDEX "OTP_email_idx" ON "OTP"("email");
+
+-- CreateIndex
+CREATE INDEX "OTP_email_code_idx" ON "OTP"("email", "code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PasswordReset_tokenHash_key" ON "PasswordReset"("tokenHash");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "UserDetail_userId_key" ON "UserDetail"("userId");
 
 -- CreateIndex
@@ -250,6 +290,9 @@ CREATE UNIQUE INDEX "NoteAndTerms_userId_key" ON "NoteAndTerms"("userId");
 
 -- AddForeignKey
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PasswordReset" ADD CONSTRAINT "PasswordReset_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserDetail" ADD CONSTRAINT "UserDetail_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
