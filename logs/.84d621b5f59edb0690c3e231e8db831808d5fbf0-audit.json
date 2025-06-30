@@ -6,39 +6,9 @@
     "auditLog": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/.84d621b5f59edb0690c3e231e8db831808d5fbf0-audit.json",
     "files": [
         {
-            "date": 1748358435554,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-05-27.log",
-            "hash": "adff7250f6ad15e6a79d802ce3e390cc1ac499e77262cf33b6014832e51fd0c3"
-        },
-        {
-            "date": 1748498419956,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-05-29.log",
-            "hash": "00a4f36f4af822e8497482254e51a86e47ed7f0b758f707934ab989249027708"
-        },
-        {
-            "date": 1748764709270,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-01.log",
-            "hash": "1aea680658a05ea5c7d4106ffac57467e021bd22abda0ae34f948ab96173e421"
-        },
-        {
-            "date": 1749121578832,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-05.log",
-            "hash": "c504955b0c9a3a848704830e6f84bde8e76cd18f82d046acf9dfae5c4570aac2"
-        },
-        {
-            "date": 1749148304185,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-06.log",
-            "hash": "bce20701ca6a5566077f738a5f04c5a970ce6065031fb91a8229ed1529b51d3f"
-        },
-        {
-            "date": 1749283705286,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-07.log",
-            "hash": "ec5473a96aa7b997761b57350108b50b0ecef83cfc7bb8030f56b25f48a21a15"
-        },
-        {
-            "date": 1749444642809,
-            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-09.log",
-            "hash": "0525c938c502af17b3a59d7ba511a501f0450362bc47427f8ba157daeb6aaed5"
+            "date": 1751276869681,
+            "name": "/Users/rajkoladiya/Projects/Magic Billing/Magic Billing Server/logs/application-2025-06-30.log",
+            "hash": "9d9d3ca4242136307ee3713355947c0a29f01ab515174947bd9b477e80190adc"
         }
     ],
     "hashType": "sha256"

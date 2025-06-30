@@ -18,6 +18,6 @@ router.post("/", createHandler);
 router.get("/", listHandler);
 router.get("/:id", detailHandler);
 router.put("/:id", updateHandler);
-router.delete("/:id", deleteHandler);
+router.delete("/:id", deleteHandler); 
 
 export default router;

@@ -11,5 +11,6 @@ router.post("/", bill_controller_1.createBill);
 router.put("/:id", bill_controller_1.updateBill);
 router.delete("/bulk", bill_controller_1.bulkDeleteBills);
 router.delete("/:id", bill_controller_1.deleteBill);
+router.get("/:id/pdf", bill_controller_1.downloadInvoicePdf);
 exports.default = router;
 //# sourceMappingURL=bill.routes.js.map

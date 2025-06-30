@@ -7,6 +7,7 @@ import {
   updateBill,
   deleteBill,
   bulkDeleteBills,
+  downloadInvoicePdf,
 } from "./bill.controller";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.post("/", createBill);
 router.put("/:id", updateBill);
 router.delete("/bulk", bulkDeleteBills);
 router.delete("/:id", deleteBill);
+router.get("/:id/pdf", downloadInvoicePdf);
 
 export default router;

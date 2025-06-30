@@ -1,9 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bulkDeleteBills = exports.deleteBill = exports.updateBill = exports.createBill = exports.getBill = exports.listBills = void 0;
+exports.downloadInvoicePdf = exports.bulkDeleteBills = exports.deleteBill = exports.updateBill = exports.createBill = exports.getBill = exports.listBills = void 0;
 const database_config_1 = require("../../../config/database.config");
 const httpResponse_1 = require("../../../core/utils/httpResponse");
 const uuid_1 = require("uuid");
+const ejs_1 = __importDefault(require("ejs"));
+const path_1 = __importDefault(require("path"));
+const puppeteer_1 = __importDefault(require("puppeteer"));
 const PAGE_SIZE = 10;
 const listBills = async (req, res) => {
     var _a;
@@ -230,4 +236,48 @@ const bulkDeleteBills = async (req, res) => {
     }
 };
 exports.bulkDeleteBills = bulkDeleteBills;
+const downloadInvoicePdf = async (req, res) => {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    const { id } = req.params;
+    if (!userId) {
+        (0, httpResponse_1.sendErrorResponse)(res, 401, "Unauthorized");
+        return;
+    }
+    if (!(0, uuid_1.validate)(id)) {
+        (0, httpResponse_1.sendErrorResponse)(res, 400, "Invalid bill ID.");
+        return;
+    }
+    const bill = await database_config_1.prisma.bill.findFirst({
+        where: { id, userId },
+        include: { items: true, customer: true },
+    });
+    if (!bill) {
+        (0, httpResponse_1.sendErrorResponse)(res, 404, "Bill not found.");
+        return;
+    }
+    try {
+        const templatePath = path_1.default.join(__dirname, "../../../../views/invoice.ejs");
+        const html = await ejs_1.default.renderFile(templatePath, { bill, customer: bill.customer });
+        const browser = await puppeteer_1.default.launch({ args: ["--no-sandbox"] });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: { top: "20px", bottom: "20px" },
+        });
+        await browser.close();
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="invoice-${bill.documentNumber}.pdf"`,
+        });
+        res.send(pdfBuffer);
+    }
+    catch (err) {
+        console.error("downloadInvoicePdf error:", err);
+        (0, httpResponse_1.sendErrorResponse)(res, 500, "Failed to generate PDF.");
+    }
+};
+exports.downloadInvoicePdf = downloadInvoicePdf;
 //# sourceMappingURL=bill.controller.js.map

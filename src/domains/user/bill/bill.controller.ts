@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { prisma } from "../../../config/database.config";
 import { sendErrorResponse, sendSuccessResponse } from "../../../core/utils/httpResponse";
 import { validate as isUUID } from "uuid";
+import ejs from "ejs";
+import path from "path";
+import puppeteer from "puppeteer";
 
 const PAGE_SIZE = 10;
 
@@ -263,4 +266,57 @@ export const bulkDeleteBills = async (req: Request, res: Response) => {
         console.error("bulkDeleteBills error:", err);
         sendErrorResponse(res, 500, "Failed to bulk delete bills.");
     }
+};
+
+
+
+export const downloadInvoicePdf = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+
+  if (!userId) {
+      sendErrorResponse(res, 401, "Unauthorized");
+      return; 
+  }
+  if (!isUUID(id)) {
+      sendErrorResponse(res, 400, "Invalid bill ID.");
+      return;
+  }
+
+  // 1. Fetch bill and items
+  const bill = await prisma.bill.findFirst({
+    where: { id, userId },
+    include: { items: true, customer: true },
+  });
+  if (!bill) {
+      sendErrorResponse(res, 404, "Bill not found.");
+      return; 
+  }
+
+  try {
+    // 2. Render EJS to HTML
+    const templatePath = path.join(__dirname, "../../../../views/invoice.ejs");
+    const html = await ejs.renderFile(templatePath, { bill, customer: bill.customer });
+
+    // 3. Launch Puppeteer, generate PDF
+    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: { top: "20px", bottom: "20px" },
+    });
+    await browser.close();
+
+    // 4. Send PDF to client
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="invoice-${bill.documentNumber}.pdf"`,
+    });
+     res.send(pdfBuffer);
+  } catch (err: any) {
+    console.error("downloadInvoicePdf error:", err);
+     sendErrorResponse(res, 500, "Failed to generate PDF.");
+  }
 };
