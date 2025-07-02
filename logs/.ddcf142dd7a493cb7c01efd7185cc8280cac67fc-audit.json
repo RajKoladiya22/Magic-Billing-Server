@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "D:\\Project\\Billing\\Magic-Billing-Server\\Magic-Billing-Server\\logs\\.ddcf142dd7a493cb7c01efd7185cc8280cac67fc-audit.json",
+    "files": [
+        {
+            "date": 1751439355463,
+            "name": "D:\\Project\\Billing\\Magic-Billing-Server\\Magic-Billing-Server\\logs\\application-2025-07-02.log",
+            "hash": "9ac4d88a261a6a27dc4f5cb4bd626885bc1ad931164b213e81a37922962ef46b"
+        }
+    ],
+    "hashType": "sha256"
+}

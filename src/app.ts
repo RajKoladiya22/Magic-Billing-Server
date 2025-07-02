@@ -18,13 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://dashbord-seven-sigma.vercel.app"], // your frontend URL
+  origin: ["http://localhost:3000", "http://localhost:3333/", "https://dashbord-seven-sigma.vercel.app"], // your frontend URL
   credentials: true, // <— allow cookies
 };
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
-// app.use(cors(corsOptions));
-// app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
