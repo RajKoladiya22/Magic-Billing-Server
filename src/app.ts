@@ -21,7 +21,12 @@ const corsOptions = {
   origin: ["http://localhost:3000", "http://localhost:3333/", "https://dashbord-seven-sigma.vercel.app"], // your frontend URL
   credentials: true, // <— allow cookies
 };
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors({
+  origin: true,        // Reflects the request's origin to allow all
+  credentials: true,   // Enables cookies/auth headers
+  optionsSuccessStatus: 204,
+}));
 app.use(helmet());
 app.use(compression());
 // app.options("*", cors(corsOptions));

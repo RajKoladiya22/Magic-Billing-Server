@@ -20,7 +20,11 @@ const corsOptions = {
     origin: ["http://localhost:3000", "http://localhost:3333/", "https://dashbord-seven-sigma.vercel.app"],
     credentials: true,
 };
-app.use((0, cors_1.default)(corsOptions));
+app.use((0, cors_1.default)({
+    origin: true,
+    credentials: true,
+    optionsSuccessStatus: 204,
+}));
 app.use((0, helmet_1.default)());
 app.use((0, compression_1.default)());
 app.set("view engine", "ejs");
