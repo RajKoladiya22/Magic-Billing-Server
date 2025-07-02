@@ -23,7 +23,6 @@ const corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 app.use((0, helmet_1.default)());
 app.use((0, compression_1.default)());
-app.options("*", (0, cors_1.default)(corsOptions));
 app.set("view engine", "ejs");
 app.set("views", path_1.default.join(__dirname, "..", "views"));
 const whitelist = [
